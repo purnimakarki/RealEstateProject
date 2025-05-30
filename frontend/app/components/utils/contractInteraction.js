@@ -77,6 +77,38 @@ export const getAllProperties = async () => {
 };
 
 // Buy tokens from initial sale
+// export const buyTokensFromSale = async (propertyId, tokenAmount) => {
+//   try {
+//     if (!tokenAmount || tokenAmount <= 0) {
+//       throw new Error("Token amount must be greater than 0");
+//     }
+
+//     const contract = await getFactoryContract(true);
+    
+//     // Calculate cost exactly as the contract expects
+//     // $50 per token converted to wei (10^18)
+//     const tokenPriceWei = ethers.parseUnits("50", 18);
+//     const totalCost = tokenPriceWei * BigInt(tokenAmount);
+
+//     console.log(`Buying ${tokenAmount} tokens for property #${propertyId}`);
+//     console.log(`Total cost: ${ethers.formatEther(totalCost)} ETH`);
+    
+//     const tx = await contract.buyFromSale(propertyId, tokenAmount, {
+//       value: totalCost,
+//     });
+
+//     const receipt = await tx.wait();
+//     return {
+//       success: true,
+//       transactionHash: receipt.hash,
+//       tokenAmount: tokenAmount
+//     };
+//   } catch (error) {
+//     console.error("Error buying tokens from sale:", error);
+//     throw error;
+//   }
+// };
+
 export const buyTokensFromSale = async (propertyId, tokenAmount) => {
   try {
     if (!tokenAmount || tokenAmount <= 0) {
@@ -84,17 +116,21 @@ export const buyTokensFromSale = async (propertyId, tokenAmount) => {
     }
 
     const contract = await getFactoryContract(true);
-    
-    // Calculate cost exactly as the contract expects
-    // $50 per token converted to wei (10^18)
-    const tokenPriceWei = ethers.parseUnits("50", 18);
-    const totalCost = tokenPriceWei * BigInt(tokenAmount);
 
-    console.log(`Buying ${tokenAmount} tokens for property #${propertyId}`);
-    console.log(`Total cost: ${ethers.formatEther(totalCost)} ETH`);
-    
+    // Fetch live ETH price in USD
+    const ethPrice = await getEthToUsdRate(); // e.g., 2638.98
+
+    // Calculate USD cost
+    const usdCost = 50 * tokenAmount;
+
+    // Convert USD to ETH
+    const ethCost = usdCost / ethPrice;
+
+    // Convert ETH to Wei
+    const totalCostWei = ethers.parseEther(ethCost.toFixed(18));
+
     const tx = await contract.buyFromSale(propertyId, tokenAmount, {
-      value: totalCost,
+      value: totalCostWei,
     });
 
     const receipt = await tx.wait();
@@ -110,41 +146,62 @@ export const buyTokensFromSale = async (propertyId, tokenAmount) => {
 };
 
 // Enhanced function to buy tokens from a listing
-export const buyTokensFromListingV2 = async (propertyId, listingIndex) => {
+// export const buyTokensFromListingv2 = async (propertyId, listingIndex) => {
+//   try {
+//     const contract = await getFactoryContract(true);
+//     const listings = await contract.getListings(propertyId);
+    
+//     if (listingIndex >= listings.length) {
+//       throw new Error("Invalid listing index");
+//     }
+    
+//     const listing = listings[listingIndex];
+    
+//     // Calculate total cost
+//     const tokenAmount = Number(listing.tokenAmount);
+//     const pricePerToken = ethers.formatUnits(listing.pricePerToken, 18);
+//     const totalCostUSD = tokenAmount * Number(pricePerToken);
+    
+//     // Convert USD to ETH
+//     const ethRate = await getEthToUsdRate();
+//     const costInEth = totalCostUSD / ethRate;
+//     const totalCost = ethers.parseEther(costInEth.toString());
+
+//     console.log(`Buying ${tokenAmount} tokens from listing #${listingIndex}`);
+//     console.log(`Total cost: $${totalCostUSD} (${costInEth} ETH)`);
+    
+//     const tx = await contract.buyFromListing(propertyId, listingIndex, {
+//       value: totalCost,
+//     });
+    
+//     const receipt = await tx.wait();
+//     return {
+//       success: true,
+//       transactionHash: receipt.hash,
+//       tokenAmount: tokenAmount,
+//       seller: listing.seller
+//     };
+//   } catch (error) {
+//     console.error("Error buying tokens from listing:", error);
+//     throw error;
+//   }
+// };
+
+export const buyTokensFromListingv2 = async (propertyId, listingIndex) => {
   try {
     const contract = await getFactoryContract(true);
     const listings = await contract.getListings(propertyId);
-    
-    if (listingIndex >= listings.length) {
-      throw new Error("Invalid listing index");
-    }
-    
-    const listing = listings[listingIndex];
-    
-    // Calculate total cost
-    const tokenAmount = Number(listing.tokenAmount);
-    const pricePerToken = ethers.formatUnits(listing.pricePerToken, 18);
-    const totalCostUSD = tokenAmount * Number(pricePerToken);
-    
-    // Convert USD to ETH
-    const ethRate = await getEthToUsdRate();
-    const costInEth = totalCostUSD / ethRate;
-    const totalCost = ethers.parseEther(costInEth.toString());
 
-    console.log(`Buying ${tokenAmount} tokens from listing #${listingIndex}`);
-    console.log(`Total cost: $${totalCostUSD} (${costInEth} ETH)`);
-    
+    if (listingIndex >= listings.length) throw new Error("Invalid listing index");
+
+    const listing = listings[listingIndex];
+    // Use the exact price from the listing (wei)
+    const totalCost = listing.tokenAmount * listing.pricePerToken;
+
     const tx = await contract.buyFromListing(propertyId, listingIndex, {
       value: totalCost,
     });
-    
-    const receipt = await tx.wait();
-    return {
-      success: true,
-      transactionHash: receipt.hash,
-      tokenAmount: tokenAmount,
-      seller: listing.seller
-    };
+    return await tx.wait();
   } catch (error) {
     console.error("Error buying tokens from listing:", error);
     throw error;
