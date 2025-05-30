@@ -1,0 +1,933 @@
+@import "tailwindcss";
+
+.bg-black {
+  background-color: #000000 !important;
+}
+
+.text-white {
+  color: #ffffff;
+}
+
+section {
+  transition: background-color 0.5s ease;
+}
+
+
+/* Button press effect - add this near your other button styles */
+button, 
+.btn,
+[type="button"],
+[type="submit"],
+[type="reset"] {
+  position: relative;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+button:active, 
+.btn:active,
+[type="button"]:active,
+[type="submit"]:active,
+[type="reset"]:active {
+  transform: translateY(2px) scale(0.98);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Add a specific class for buttons with press effect */
+.btn-press-effect {
+  position: relative;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.btn-press-effect:active {
+  transform: translateY(2px) scale(0.98);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Add ripple effect for buttons */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple:after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform 0.5s, opacity 0.5s;
+}
+
+.btn-ripple:active:after {
+  transform: scale(0, 0);
+  opacity: 0.3;
+  transition: 0s;
+}
+
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slowZoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 1s ease-out forwards;
+}
+
+.animate-slow-zoom {
+  animation: slowZoom 10s ease-in-out infinite alternate;
+}
+
+.duration-2000 {
+  transition-duration: 2000ms;
+}
+
+.duration-10000 {
+  transition-duration: 10000ms;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+
+/* ==================== NAVBAR STYLES ==================== */
+.navbar {
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  padding: 1rem 0;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+.logo a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: linear-gradient(to right, #ffffff, #ecf0f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.logo a:hover {
+  transform: scale(1.05);
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 500;
+  position: relative;
+  padding: 0.5rem 0;
+  transition: all 0.3s ease;
+}
+
+.nav-item::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background: #ecf0f1;
+  transition: width 0.3s ease;
+}
+
+.nav-item:hover {
+  color: #ecf0f1;
+}
+
+.nav-item:hover::after {
+  width: 100%;
+}
+
+/* Navbar animations */
+
+
+
+@keyframes navbarFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navbar-scroll-visible {
+  animation: navbarFadeIn 0.4s ease-out forwards;
+}
+
+nav {
+  transition: background-color 0.5s ease-in-out, 
+              backdrop-filter 0.5s ease-in-out,
+              box-shadow 0.5s ease-in-out,
+              padding 0.3s ease-in-out;
+}
+
+/* Responsive navbar */
+@media (max-width: 768px) {
+  .nav-container {
+    padding: 0 1rem;
+  }
+
+  .nav-links {
+    gap: 1rem;
+  }
+
+  .logo a {
+    font-size: 1.4rem;
+  }
+
+  .nav-item {
+    font-size: 1rem;
+  }
+}
+
+/* ==================== LANDING PAGE STYLES ==================== */
+.hero-section {
+  padding-top: 80px; /* Adjust based on your navbar height */
+}
+
+@keyframes wave {
+  0% {
+    transform: translateX(-50%) skew(-3deg);
+  }
+  50% {
+    transform: translateX(0%) skew(0deg);
+  }
+  100% {
+    transform: translateX(50%) skew(3deg);
+  }
+}
+
+.animate-wave {
+  animation: wave 10s ease-in-out infinite alternate;
+}
+
+.shadow-glow {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+}
+
+.shadow-glow:hover {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+/* ==================== FOOTER ANIMATIONS ==================== */
+/* House and building animations */
+@keyframes windowLight {
+  0%, 10%, 90%, 100% {
+    opacity: 0;
+  }
+  40%, 60% {
+    opacity: 0.8;
+  }
+}
+
+/* People animations */
+@keyframes personRunning {
+  0% {
+    left: -5%;
+  }
+  100% {
+    left: 110%;
+  }
+}
+
+@keyframes personWalking {
+  0% {
+    left: -5%;
+  }
+  100% {
+    left: 110%;
+  }
+}
+
+@keyframes peopleStanding {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes legMoving {
+  0% {
+    transform: rotate(-15deg);
+  }
+  100% {
+    transform: rotate(15deg);
+  }
+}
+
+@keyframes armSwinging {
+  0% {
+    transform: rotate(-20deg);
+  }
+  100% {
+    transform: rotate(20deg);
+  }
+}
+
+@keyframes armPointing {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(15deg);
+  }
+}
+
+/* Vehicle animations - fixed direction */
+@keyframes carDriving {
+  0% {
+    left: 110%;
+  }
+  100% {
+    left: -10%;
+  }
+}
+
+@keyframes busDriving {
+  0% {
+    right: -20%;
+  }
+  100% {
+    right: 110%;
+  }
+}
+
+@keyframes carDrivingReverse {
+  0% {
+    right: -10%;
+  }
+  100% {
+    right: 110%;
+  }
+}
+
+/* Road and environment animations */
+@keyframes roadMarkersMoving {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100px);
+  }
+}
+
+@keyframes balloon {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    opacity: 0.2;
+    box-shadow: 0 0 5px rgba(255, 255, 0, 0.5);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 15px rgba(255, 255, 0, 0.8);
+  }
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes smoke {
+  0% {
+    transform: translate(-50%, 0);
+    opacity: 0.7;
+    width: 2px;
+    height: 2px;
+  }
+  100% {
+    transform: translate(-50%, -15px);
+    opacity: 0;
+    width: 4px;
+    height: 4px;
+  }
+}
+
+@keyframes shootingStar {
+  0% {
+    transform: translateX(0) translateY(0) rotate(45deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  20% {
+    transform: translateX(-100px) translateY(100px) rotate(45deg);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Add this to your globals.css file */
+
+/* ==================== TESTIMONIAL STYLES ==================== */
+.testimonial-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/*Sell styles*/
+.form-container {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.form-container:hover {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+}
+
+.form-section {
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+}
+
+.form-section:last-child {
+  border-bottom: none;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.section-title::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 20px;
+  background-color: #3b82f6;
+  margin-right: 0.75rem;
+  border-radius: 2px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  transition: all 0.2s;
+  background-color: #f9fafb;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.input-field::placeholder {
+  color: #9ca3af;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.checkbox-container:hover {
+  background-color: #f3f4f6;
+}
+
+.checkbox-input {
+  height: 1rem;
+  width: 1rem;
+  color: #3b82f6;
+  border-radius: 4px;
+}
+
+.checkbox-label {
+  margin-left: 0.5rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.image-upload-container {
+  border: 2px dashed #e5e7eb;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.image-upload-container:hover {
+  border-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.image-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.image-preview-item {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.image-preview-item:hover {
+  transform: scale(1.03);
+}
+
+.image-preview-img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+}
+
+.image-remove-btn {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background-color: rgba(239, 68, 68, 0.9);
+  color: white;
+  border-radius: 50%;
+  padding: 0.25rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.image-preview-item:hover .image-remove-btn {
+  opacity: 1;
+}
+
+.submit-button {
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 500;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25);
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: #2563eb;
+  box-shadow: 0 6px 10px rgba(37, 99, 235, 0.3);
+  transform: translateY(-1px);
+}
+
+.submit-button:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+.status-alert {
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.status-alert-success {
+  background-color: #ecfdf5;
+  border: 1px solid #d1fae5;
+}
+
+.status-alert-error {
+  background-color: #fef2f2;
+  border: 1px solid #fee2e2;
+}
+
+.status-icon {
+  margin-top: 0.125rem;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+
+.status-title {
+  font-weight: 500;
+}
+
+.status-message {
+  margin-top: 0.25rem;
+}
+
+
+/* Add these animations to your existing globals.css */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Glass morphism utilities */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.backdrop-blur-md {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Improve focus states for accessibility */
+input:focus, select:focus, button:focus {
+  outline: 2px solid rgba(59, 130, 246, 0.5);
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(31, 41, 55, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.7);
+}
+
+/* ==================== SELL PAGE DARK THEME ==================== */
+.sell-page-container {
+  background-color: #121212;
+  color: #e0e0e0;
+  min-height: 100vh;
+}
+
+.sell-page-header {
+  background: linear-gradient(to right, #1a1a1a, #2d2d2d);
+  padding: 2.5rem 0;
+  border-bottom: 1px solid #333;
+}
+
+.sell-page-title {
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.sell-page-subtitle {
+  color: #b0b0b0;
+}
+
+.sell-form-container {
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid #333;
+  transition: all 0.3s ease;
+}
+
+.sell-form-container:hover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+
+.sell-form-section {
+  border-bottom: 1px solid #333;
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+}
+
+.sell-form-section:last-child {
+  border-bottom: none;
+}
+
+.sell-section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.sell-section-title::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 20px;
+  background-color: #3b82f6;
+  margin-right: 0.75rem;
+  border-radius: 2px;
+}
+
+.sell-input-field {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #444;
+  border-radius: 8px;
+  transition: all 0.2s;
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+}
+
+.sell-input-field:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: #333;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.sell-input-field::placeholder {
+  color: #777;
+}
+
+.sell-checkbox-container {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.sell-checkbox-container:hover {
+  background-color: #2a2a2a;
+}
+
+.sell-checkbox-input {
+  height: 1rem;
+  width: 1rem;
+  accent-color: #3b82f6;
+  border-radius: 4px;
+}
+
+.sell-checkbox-label {
+  margin-left: 0.5rem;
+  font-size: 0.875rem;
+  color: #b0b0b0;
+}
+
+.sell-image-upload-container {
+  border: 2px dashed #444;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.sell-image-upload-container:hover {
+  border-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.sell-image-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.sell-image-preview-item {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+  border: 1px solid #444;
+}
+
+.sell-image-preview-item:hover {
+  transform: scale(1.03);
+}
+
+.sell-image-preview-img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+}
+
+.sell-image-remove-btn {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background-color: rgba(239, 68, 68, 0.9);
+  color: white;
+  border-radius: 50%;
+  padding: 0.25rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.sell-image-preview-item:hover .sell-image-remove-btn {
+  opacity: 1;
+}
+
+.sell-submit-button {
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 500;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.sell-submit-button:hover:not(:disabled) {
+  background-color: #2563eb;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+.sell-submit-button:disabled {
+  background-color: #2d3748;
+  cursor: not-allowed;
+}
+
+.sell-status-alert {
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.sell-status-alert-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.sell-status-alert-error {
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.sell-status-icon {
+  margin-top: 0.125rem;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+
+.sell-status-title {
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.sell-status-message {
+  margin-top: 0.25rem;
+  color: #b0b0b0;
+}
