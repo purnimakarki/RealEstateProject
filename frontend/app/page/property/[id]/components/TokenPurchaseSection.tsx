@@ -125,7 +125,7 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
         const properties = await contract.getProperties();
         if (propertyId < properties[0].length) {
           setTokenPrice(50);
-          const propertyValue = Number(ethers.formatUnits(properties[1][propertyId], 18));
+          const propertyValue = Number(ethers.formatUnits(properties[1][propertyId]));
           const calculatedTotalTokens = Math.floor(propertyValue / 50);
           setTotalTokens(calculatedTotalTokens);
         }
