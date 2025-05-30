@@ -200,7 +200,7 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
         signer
       );
       
-      const tokenPriceWei = ethers.parseUnits(tokenPriceInEth.toString(), 18);
+      const tokenPriceWei = ethers.parseUnits(tokenPriceInEth.toString(), 'wei');
       const totalCost = tokenPriceWei * BigInt(tokenAmount);
       
       console.log(`Buying ${tokenAmount} tokens for property #${propertyId}`);
