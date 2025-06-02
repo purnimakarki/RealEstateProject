@@ -6,16 +6,16 @@ import {
   getPendingProperties 
 } from '../components/utils/contractInteraction';
 
-type Property = {
+export type Property = { // Added export here
   id: number;
   propertyAddress: string;
   value: string;
   tokenAddress: string;
   propertyImageURLs: string[];
   status: 'pending' | 'approved' | 'rejected';
-  originalIndex?: number; // Original index from the UI
-  contractIndex?: number; // Index to use with the contract
-  originalOwner?: string; // Add the original owner address
+  originalIndex?: number; 
+  contractIndex?: number; 
+  originalOwner?: string;
 };
 
 type PropertyContextType = {
@@ -196,9 +196,23 @@ export const PropertyProvider = ({ children }: { children: React.ReactNode }) =>
   };
 
   const addProperty = async (property: Property) => {
-    setPendingProperties(prev => [...prev, property]);
+    setPendingProperties(prev => {
+      // Prevent adding duplicate temporary properties if this function is called multiple times rapidly
+      // This assumes 'id' for a new pending property is unique at the time of addition
+      // or that properties from contract will have different (likely numeric) IDs.
+      // It also checks the status to be more specific.
+      const existingProperty = prev.find(p => p.id === property.id && p.status === property.status);
+      if (existingProperty) {
+        return prev; // Avoid adding a duplicate
+      }
+      return [...prev, property];
+    });
     
-    await fetchPendingProperties();
+    // await fetchPendingProperties(); // Removed this line.
+                                    // This call could overwrite the optimistic update if the contract 
+                                    // hasn't processed the submission yet. Pending properties will 
+                                    // be refreshed by other mechanisms, like on profile page load 
+                                    // or periodic refresh.
   };
 
   return (

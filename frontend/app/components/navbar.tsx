@@ -108,7 +108,7 @@ export default function Navbar() {
         <Link href="/" className={`text-xl font-bold transition-all duration-300 -ml-1 ${
           scrolled ? 'text-gray-900' : 'text-white'
         } hover:text-blue-500`}>
-          BlocAdobe
+          BlocAbode
         </Link>
       </div>
       

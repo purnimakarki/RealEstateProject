@@ -12,8 +12,12 @@ import FormNavigation from './components/FormNavigation';
 import ProgressBar from './components/ProgressBar';
 import SuccessMessage from './components/SuccessMessage';
 import ErrorMessage from './components/ErrorMessage';
+import { usePropertyContext } from '../../context/PropertyContext'; // Added
+import { useWallet } from '../../components/hooks/usewallet'; // Added
 
 export default function SellPage() {
+  const { addProperty } = usePropertyContext(); // Added
+  const { account } = useWallet(); // Added
   // Form state
   const [formData, setFormData] = useState({
     propertyType: 'apartment',
@@ -64,6 +68,12 @@ export default function SellPage() {
       return;
     }
 
+    if (!account) { // Added check for account
+      setErrors((prev) => ({ ...prev, form: 'Please connect your wallet to submit a property.' }));
+      setSubmitStatus('error');
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
@@ -103,6 +113,20 @@ export default function SellPage() {
         );
 
         await tx.wait();
+
+        // Add property to context with pending status
+        if (account) { // Ensure account is available
+          const newPendingProperty = {
+            id: Date.now(), // Temporary ID, context might re-index based on contract
+            propertyAddress: propertyData.address,
+            value: formData.price, // Original price as string
+            tokenAddress: '', // No token address yet
+            propertyImageURLs: hashes, // IPFS hashes
+            status: 'pending' as const,
+            originalOwner: account, // Associate with current user
+          };
+          addProperty(newPendingProperty);
+        }
 
         setSubmitStatus('success');
         // Reset form after successful submission
