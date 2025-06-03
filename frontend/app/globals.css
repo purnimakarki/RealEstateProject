@@ -1,3 +1,5 @@
+
+
 @import "tailwindcss";
 
 .bg-black {
@@ -931,3 +933,112 @@ input:focus, select:focus, button:focus {
   margin-top: 0.25rem;
   color: #b0b0b0;
 }
+
+/* Minimalistic Dark Mode Form */
+.minimalist-dark-form {
+  background-color: #121212;
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.minimalist-dark-form h2 {
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #333;
+  padding-bottom: 0.5rem;
+}
+
+.minimalist-dark-form label {
+  color: #b0b0b0;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.minimalist-dark-form input,
+.minimalist-dark-form select,
+.minimalist-dark-form textarea {
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 0.75rem;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.minimalist-dark-form input:focus,
+.minimalist-dark-form select:focus,
+.minimalist-dark-form textarea:focus {
+  border-color: #3b82f6;
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.minimalist-dark-form input::placeholder,
+.minimalist-dark-form textarea::placeholder {
+  color: #666;
+}
+
+/* Checkbox styling */
+.minimalist-dark-form input[type="checkbox"] {
+  width: auto;
+  accent-color: #3b82f6;
+}
+
+.minimalist-dark-form .checkbox-container {
+  background-color: transparent;
+  padding: 0.5rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.minimalist-dark-form .checkbox-container:hover {
+  background-color: #1e1e1e;
+}
+
+.minimalist-dark-form .checkbox-label {
+  color: #b0b0b0;
+  margin-left: 0.5rem;
+}
+
+/* Error message styling */
+.minimalist-dark-form .text-red-500 {
+  color: #f87171;
+}
+
+/* Image uploader styling */
+.minimalist-dark-form .image-upload-container {
+  border: 2px dashed #333;
+  background-color: #1e1e1e;
+  border-radius: 4px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.minimalist-dark-form .image-upload-container:hover {
+  border-color: #3b82f6;
+  background-color: #252525;
+}
+
+.minimalist-dark-form .image-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.minimalist-dark-form .image-preview-item {
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  border: 1px solid #333;
+}
+
