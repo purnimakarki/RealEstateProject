@@ -571,7 +571,7 @@ const Footer = () => {
           {/* Logo & Description */}
           <div className={`transition-all duration-1000 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <div className="flex items-center mb-4">
-              <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-blue-500">BlocAdobe</h3>
+              <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-blue-500">BlocAbode</h3>
               <div className="ml-2 w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
             </div>
           
@@ -641,7 +641,7 @@ const Footer = () => {
                 <svg className="h-5 w-5 text-blue-400 mr-3 group-hover:animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <span>contact@blocadobe.com</span>
+                <span>contact@blocabode.com</span>
               </li>
               <li className="flex items-center group hover:text-white transition-colors">
                 <svg className="h-5 w-5 text-blue-400 mr-3 group-hover:animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">

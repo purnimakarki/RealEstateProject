@@ -457,40 +457,56 @@ export const getPendingProperties = async () => {
   try {
     console.log("Getting pending properties from contract...");
     const contract = await getFactoryContract();
-    const pendingProps = await contract.getPendingProperties();
+    const rawPendingProps = await contract.getPendingProperties(); // Renamed to rawPendingProp
     
-    console.log("Total pending properties in contract:", pendingProps.length);
-    
-    if (!pendingProps || pendingProps.length === 0) {
-      console.log("No pending properties found in contract");
+    // It's crucial to know the structure of rawPendingProps here.
+    // Log it to be sure, handling BigInts for stringification:
+    console.log("Raw pending properties from contract:", JSON.stringify(rawPendingProps, (key, value) =>
+      typeof value === 'bigint'
+        ? value.toString()
+        : value // return everything else unchanged
+    ));
+
+   
+
+    const propertyStructs = rawPendingProps[1]; // Or rawPendingProps if it's not nested
+    const propertyIds = rawPendingProps[0]; // Corresponding IDs
+
+    if (!propertyStructs || propertyStructs.length === 0) {
+      console.log("No pending property structs found in contract data");
       return [];
     }
     
-    // Format the pending properties
-    const formattedPendingProps = pendingProps[1].map((prop, index) => {
-      // Add null checks for each property
-      if (!prop) return null;
+    console.log("Total pending property structs in contract:", propertyStructs.length);
+    
+    const formattedPendingProps = propertyStructs.map((prop, index) => {
+      if (!prop || !prop.exists) { // Added a check for prop.exists as well
+        console.log(`Property at index ${index} is null or does not exist`);
+        return null;
+      }
       
-      // Check if value exists before formatting
-      const formattedValue = prop.value ? ethers.formatUnits(prop.value, 18) : '0';
+      const formattedValue = prop.value ? ethers.formatUnits(prop.value.toString(), 18) : '0'; // Ensure value is a string for formatUnits
       
       return {
-        index,
+        // id: propertyIds[index].toString(), // Use the actual ID from the contract, ensure it's a string if needed by Property type
+        contractIndex: propertyIds[index].toString(), // Changed to match Property type if it expects string
         propertyAddress: prop.propertyAddress || '',
         value: formattedValue,
         originalOwner: prop.originalOwner || '',
         propertyImageURLs: prop.propertyImageURLs || [],
-        approved: prop.approved || false,
-        exists: prop.exists || false,
-        contractIndex: pendingProps[0][index] // Use the correct index from the IDs array
+        // 'approved' status will be determined in PropertyContext based on which array it's in
+        // For getPendingProperties, they are by definition not yet approved or rejected by our app's logic
+        status: 'pending', // Explicitly set status for properties fetched here
+        exists: prop.exists || false, // Ensure exists is carried over
       };
-    }).filter(Boolean); // Remove null entries
+    }).filter(prop => prop !== null); // More explicit filter
     
-    console.log("Received properties:", formattedPendingProps);
+    console.log("Received properties (after formatting):", formattedPendingProps);
     return formattedPendingProps;
   } catch (error) {
     console.error("Error fetching pending properties:", error);
-    throw error;
+    // throw error; // Consider re-throwing or returning an empty array / error object
+    return []; // Return empty array on error to prevent crashes downstream
   }
 };
 
