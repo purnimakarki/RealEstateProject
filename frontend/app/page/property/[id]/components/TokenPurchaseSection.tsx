@@ -33,7 +33,7 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
   const [totalTokens, setTotalTokens] = useState<number>(0);
   
   // Fixed token price in ETH as defined in the smart contract
-  const tokenPriceInEth = 50; // 50 ETH per token
+  const tokenPriceInEth = 50; // 50 $ per token
   
   // Calculate USD price based on current ETH price
   const tokenPriceInUsd = tokenPriceInEth * ethPrice;
@@ -125,7 +125,7 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
         const properties = await contract.getProperties();
         if (propertyId < properties[0].length) {
           setTokenPrice(50);
-          const propertyValue = Number(ethers.formatUnits(properties[1][propertyId], 18));
+          const propertyValue = Number(ethers.formatUnits(properties[1][propertyId]));
           const calculatedTotalTokens = Math.floor(propertyValue / 50);
           setTotalTokens(calculatedTotalTokens);
         }
@@ -200,7 +200,7 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
         signer
       );
       
-      const tokenPriceWei = ethers.parseUnits(tokenPriceInEth.toString(), 18);
+      const tokenPriceWei = ethers.parseUnits(tokenPriceInEth.toString(), 'wei');
       const totalCost = tokenPriceWei * BigInt(tokenAmount);
       
       console.log(`Buying ${tokenAmount} tokens for property #${propertyId}`);
