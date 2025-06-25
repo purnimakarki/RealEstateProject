@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bed, Bath, Square, MapPin, Calendar } from 'lucide-react';
+import { Bed, Bath, Square, MapPin, Calendar, FileText } from 'lucide-react';
 
 interface PropertyInformationProps {
   property: any;
@@ -62,7 +62,7 @@ const PropertyInformation: React.FC<PropertyInformationProps> = ({ property }) =
       </div>
       
       {property.amenities && property.amenities.length > 0 && (
-        <div>
+        <div className="mb-6">
           <h3 className="font-medium mb-2">Amenities</h3>
           <div className="grid grid-cols-2 gap-2">
             {property.amenities.map((amenity: string, index: number) => (
@@ -71,6 +71,52 @@ const PropertyInformation: React.FC<PropertyInformationProps> = ({ property }) =
                 <span>{amenity}</span>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {property.documentURLs && property.documentURLs.length > 0 && (
+        <div>
+          <h3 className="font-medium mb-2">Documents</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {property.documentURLs.map((url: string, index: number) => {
+              const segments = url.split('/');
+              const lastSegment = segments.pop() || 'document';
+              const decodedSegment = decodeURIComponent(lastSegment);
+              const fileName = decodedSegment.split('?')[0];
+              const displayName = fileName.length > 16 ? fileName.slice(0, 8) + '...' + fileName.slice(-8) : fileName;
+              const ipfsUrl = url.startsWith('http') ? url : `https://gateway.pinata.cloud/ipfs/${url}`;
+              return (
+                <div
+                  key={index}
+                  className="flex items-center bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-xl transition-shadow group"
+                >
+                  <FileText className="h-8 w-8 text-blue-400 mr-4 group-hover:text-blue-600" />
+                  <div className="flex-1 min-w-0">
+                    <a
+                      href={ipfsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-300 font-medium hover:underline break-all truncate block"
+                      title={fileName}
+                    >
+                      {displayName}
+                    </a>
+                    <div className="text-xs text-gray-400 mt-1">IPFS Document</div>
+                  </div>
+                  <a
+                    href={ipfsUrl}
+                    download
+                    className="ml-4 p-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                    title="Download"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m0 0l-6-6m6 6l6-6" />
+                    </svg>
+                  </a>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

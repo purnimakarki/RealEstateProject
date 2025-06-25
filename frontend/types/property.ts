@@ -20,8 +20,10 @@ export interface Property {
 
 export interface PropertyResponse {
   propertyAddress: string;
-  value: bigint; // or string if you prefer (depending on how you fetch it)
+  value: bigint;
   tokenAddress: string;
   propertyImageURLs: string[];
-
+  bedrooms: number;
+  bathrooms: number;
+  area: number;
 }

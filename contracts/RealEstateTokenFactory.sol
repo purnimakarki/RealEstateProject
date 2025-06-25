@@ -9,10 +9,23 @@ contract RealEstateTokenFactory {
 
     struct Property {
         string propertyAddress;
-        uint256 value;
+        uint256 value; 
         address tokenAddress;
         string[] propertyImageURLs;
+        string[] documentURLs;
         address originalOwner;
+        string title;
+        string description;
+        string propertyType; 
+        string apartmentType; 
+        uint256 bedrooms;
+        uint256 bathrooms;
+        uint256 area; // in sq ft
+        uint256 yearBuilt;
+        string city;
+        string state;
+        string zipCode;
+        string[] amenities;
     }
 
     struct Listing {
@@ -26,8 +39,21 @@ contract RealEstateTokenFactory {
         uint256 value;
         address originalOwner;
         string[] propertyImageURLs;
+        string[] documentURLs;
         bool approved;
         bool exists;
+        string title;
+        string description;
+        string propertyType;
+        string apartmentType;
+        uint256 bedrooms;
+        uint256 bathrooms;
+        uint256 area;
+        uint256 yearBuilt;
+        string city;
+        string state;
+        string zipCode;
+        string[] amenities;
     }
 
     Property[] public properties;
@@ -51,17 +77,43 @@ contract RealEstateTokenFactory {
     }
 
     function submitPropertyForApproval(
-    string memory propertyAddress,
-    uint256 valueUSD,
-    string[] memory _propertyImageURLs
+        string memory _propertyAddress,
+        uint256 _valueUSD,
+        string[] memory _propertyImageURLs,
+        string[] memory _documentURLs,
+        string memory _title,
+        string memory _description,
+        string memory _propertyType,
+        string memory _apartmentType,
+        uint256 _bedrooms,
+        uint256 _bathrooms,
+        uint256 _area,
+        uint256 _yearBuilt,
+        string memory _city,
+        string memory _state,
+        string memory _zipCode,
+        string[] memory _amenities
     ) public {
         pendingProperties[nextPendingPropertyId] = PendingProperty({
-            propertyAddress: propertyAddress,
-            value: valueUSD,
+            propertyAddress: _propertyAddress,
+            value: _valueUSD,
             originalOwner: msg.sender,
             approved: false,
             exists: true,
-            propertyImageURLs: _propertyImageURLs
+            propertyImageURLs: _propertyImageURLs,
+            documentURLs: _documentURLs,
+            title: _title,
+            description: _description,
+            propertyType: _propertyType,
+            apartmentType: _apartmentType,
+            bedrooms: _bedrooms,
+            bathrooms: _bathrooms,
+            area: _area,
+            yearBuilt: _yearBuilt,
+            city: _city,
+            state: _state,
+            zipCode: _zipCode,
+            amenities: _amenities
         });
         activePendingPropertyIds.push(nextPendingPropertyId);
         nextPendingPropertyId++;
@@ -89,13 +141,26 @@ contract RealEstateTokenFactory {
             pending.originalOwner
         );
         properties.push(
-            Property(
-                pending.propertyAddress,
-                pending.value,
-                address(token),
-                pending.propertyImageURLs,
-                pending.originalOwner
-            )
+            Property({
+                propertyAddress: pending.propertyAddress,
+                value: pending.value,
+                tokenAddress: address(token),
+                propertyImageURLs: pending.propertyImageURLs,
+                documentURLs: pending.documentURLs,
+                originalOwner: pending.originalOwner,
+                title: pending.title,
+                description: pending.description,
+                propertyType: pending.propertyType,
+                apartmentType: pending.apartmentType,
+                bedrooms: pending.bedrooms,
+                bathrooms: pending.bathrooms,
+                area: pending.area,
+                yearBuilt: pending.yearBuilt,
+                city: pending.city,
+                state: pending.state,
+                zipCode: pending.zipCode,
+                amenities: pending.amenities
+            })
         );
 
         pending.approved = true;
@@ -189,6 +254,16 @@ contract RealEstateTokenFactory {
         listings[propertyId].pop();
     }
 
+    function cancelListing(uint256 propertyId, uint256 listingIndex) external {
+        Listing storage listing = listings[propertyId][listingIndex];
+        require(listing.seller == msg.sender, "Only seller can cancel");
+        PropertyToken token = PropertyToken(properties[propertyId].tokenAddress);
+        token.transfer(msg.sender, listing.tokenAmount * (10 ** token.decimals()));
+        // Remove listing
+        listings[propertyId][listingIndex] = listings[propertyId][listings[propertyId].length - 1];
+        listings[propertyId].pop();
+    }
+
     // --- Getters ---
 
     function getProperties()
@@ -198,21 +273,63 @@ contract RealEstateTokenFactory {
             string[] memory propertyAddresses,
             uint256[] memory values,
             address[] memory tokenAddresses,
-            string[][] memory propertyImageURLs
+            string[][] memory propertyImageURLsList,
+            string[][] memory documentURLsList,
+            address[] memory originalOwners,
+            string[] memory titles,
+            string[] memory descriptions,
+            string[] memory propertyTypes,
+            string[] memory apartmentTypes,
+            uint256[] memory bedroomsList,
+            uint256[] memory bathroomsList,
+            uint256[] memory areas,
+            uint256[] memory yearsBuilt,
+            string[] memory cities,
+            string[] memory states,
+            string[] memory zipCodes,
+            string[][] memory amenitiesList
         )
     {
-        uint256 propertyCount = properties.length;
-        propertyAddresses = new string[](propertyCount);
-        values = new uint256[](propertyCount);
-        tokenAddresses = new address[](propertyCount);
-        propertyImageURLs = new string[][](propertyCount);
+        uint256 numProperties = properties.length;
+        propertyAddresses = new string[](numProperties);
+        values = new uint256[](numProperties);
+        tokenAddresses = new address[](numProperties);
+        propertyImageURLsList = new string[][](numProperties);
+        documentURLsList = new string[][](numProperties);
+        originalOwners = new address[](numProperties);
+        titles = new string[](numProperties);
+        descriptions = new string[](numProperties);
+        propertyTypes = new string[](numProperties);
+        apartmentTypes = new string[](numProperties);
+        bedroomsList = new uint256[](numProperties);
+        bathroomsList = new uint256[](numProperties);
+        areas = new uint256[](numProperties);
+        yearsBuilt = new uint256[](numProperties);
+        cities = new string[](numProperties);
+        states = new string[](numProperties);
+        zipCodes = new string[](numProperties);
+        amenitiesList = new string[][](numProperties);
 
-        for (uint256 i = 0; i < propertyCount; i++) {
-            Property storage property = properties[i];
-            propertyAddresses[i] = property.propertyAddress;
-            values[i] = property.value;
-            tokenAddresses[i] = property.tokenAddress;
-            propertyImageURLs[i] = property.propertyImageURLs;
+        for (uint256 i = 0; i < numProperties; i++) {
+            Property storage prop = properties[i];
+            propertyAddresses[i] = prop.propertyAddress;
+            values[i] = prop.value;
+            tokenAddresses[i] = prop.tokenAddress;
+            propertyImageURLsList[i] = prop.propertyImageURLs;
+            documentURLsList[i] = prop.documentURLs;
+            originalOwners[i] = prop.originalOwner;
+            titles[i] = prop.title;
+            descriptions[i] = prop.description;
+            propertyTypes[i] = prop.propertyType;
+            apartmentTypes[i] = prop.apartmentType;
+            bedroomsList[i] = prop.bedrooms;
+            bathroomsList[i] = prop.bathrooms;
+            areas[i] = prop.area;
+            yearsBuilt[i] = prop.yearBuilt;
+            cities[i] = prop.city;
+            states[i] = prop.state;
+            zipCodes[i] = prop.zipCode;
+            amenitiesList[i] = prop.amenities;
         }
     }
 

@@ -76,6 +76,24 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "propertyId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "listingIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "cancelListing",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "pendingIndex",
         "type": "uint256"
       }
@@ -196,6 +214,11 @@
             "type": "string[]"
           },
           {
+            "internalType": "string[]",
+            "name": "documentURLs",
+            "type": "string[]"
+          },
+          {
             "internalType": "bool",
             "name": "approved",
             "type": "bool"
@@ -204,6 +227,66 @@
             "internalType": "bool",
             "name": "exists",
             "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "propertyType",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "apartmentType",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "bedrooms",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "bathrooms",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "area",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yearBuilt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "city",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "state",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "zipCode",
+            "type": "string"
+          },
+          {
+            "internalType": "string[]",
+            "name": "amenities",
+            "type": "string[]"
           }
         ],
         "internalType": "struct RealEstateTokenFactory.PendingProperty[]",
@@ -235,7 +318,77 @@
       },
       {
         "internalType": "string[][]",
-        "name": "propertyImageURLs",
+        "name": "propertyImageURLsList",
+        "type": "string[][]"
+      },
+      {
+        "internalType": "string[][]",
+        "name": "documentURLsList",
+        "type": "string[][]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "originalOwners",
+        "type": "address[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "titles",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "descriptions",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "propertyTypes",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "apartmentTypes",
+        "type": "string[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "bedroomsList",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "bathroomsList",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "areas",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "yearsBuilt",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "cities",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "states",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "zipCodes",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[][]",
+        "name": "amenitiesList",
         "type": "string[][]"
       }
     ],
@@ -325,6 +478,61 @@
         "internalType": "bool",
         "name": "exists",
         "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "description",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "propertyType",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "apartmentType",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "bedrooms",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "bathrooms",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "area",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "yearBuilt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "city",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "state",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "zipCode",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -359,6 +567,61 @@
         "internalType": "address",
         "name": "originalOwner",
         "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "description",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "propertyType",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "apartmentType",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "bedrooms",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "bathrooms",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "area",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "yearBuilt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "city",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "state",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "zipCode",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -368,17 +631,82 @@
     "inputs": [
       {
         "internalType": "string",
-        "name": "propertyAddress",
+        "name": "_propertyAddress",
         "type": "string"
       },
       {
         "internalType": "uint256",
-        "name": "valueUSD",
+        "name": "_valueUSD",
         "type": "uint256"
       },
       {
         "internalType": "string[]",
         "name": "_propertyImageURLs",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "_documentURLs",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string",
+        "name": "_title",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_description",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_propertyType",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_apartmentType",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_bedrooms",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_bathrooms",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_area",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_yearBuilt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_city",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_state",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_zipCode",
+        "type": "string"
+      },
+      {
+        "internalType": "string[]",
+        "name": "_amenities",
         "type": "string[]"
       }
     ],

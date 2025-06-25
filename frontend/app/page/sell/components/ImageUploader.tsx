@@ -30,12 +30,12 @@ export default function ImageUploader({
   
   return (
     <div>
-      <h3 className="text-lg font-medium text-gray-700 mb-3">Property Images</h3>
-      <p className="text-sm text-gray-500 mb-4">Upload up to 5 images of your property. The first image will be used as the main image.</p>
+      <h3 className="sell-glass-section-title">Property Images</h3>
+      <p className="text-gray-300 mb-4">Upload up to 5 images of your property. The first image will be used as the main image.</p>
       
       {/* Display error message for images */}
       {errors.images && (
-        <div className="text-red-500 text-sm mb-3 flex items-center">
+        <div className="text-red-400 text-sm mb-3 flex items-center">
           <AlertTriangle className="h-3 w-3 mr-1" />
           {errors.images}
         </div>
@@ -45,14 +45,14 @@ export default function ImageUploader({
       <div className="mb-4">
         <label
           htmlFor="image-upload"
-          className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+          className="sell-glass-image-uploader flex flex-col items-center justify-center w-full h-32 cursor-pointer"
         >
           <div className="flex flex-col items-center justify-center pt-5 pb-6">
-            <Camera className="w-8 h-8 mb-3 text-gray-400" />
-            <p className="mb-2 text-sm text-gray-500">
+            <Camera className="w-8 h-8 mb-3 text-gray-300" />
+            <p className="mb-2 text-sm text-gray-300">
               <span className="font-semibold">Click to upload</span> or drag and drop
             </p>
-            <p className="text-xs text-gray-500">PNG, JPG or JPEG (MAX. 5 images)</p>
+            <p className="text-xs text-gray-400">PNG, JPG or JPEG (MAX. 5 images)</p>
           </div>
           <input
             id="image-upload"
@@ -70,7 +70,7 @@ export default function ImageUploader({
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4">
           {previewUrls.map((url, index) => (
             <div key={index} className="relative group">
-              <div className="relative h-32 w-full rounded-lg overflow-hidden">
+              <div className="relative h-32 w-full rounded-lg overflow-hidden sell-glass-image-preview">
                 <Image
                   src={url}
                   alt={`Property image ${index + 1}`}

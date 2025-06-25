@@ -5,6 +5,7 @@ import { ethers } from 'ethers';
 import RealEstateTokenFactoryABI from '../../../../../contracts/RealEstateTokenFactoryABI.json';
 import contractAddress from '../../../../../contracts/contract-address.json';
 import PropertyTokenABI from '../../../../../contracts/PropertyTokenABI.json';
+import { useNotification } from '@/app/context/NotificationContext'; // Import useNotification
 
 interface TokenPurchaseSectionProps {
   property: any;
@@ -19,7 +20,7 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
   account,
   connectWallet
 }) => {
-  // State variables
+  const { addNotification } = useNotification(); 
   const [tokenAmount, setTokenAmount] = useState<number>(1);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
@@ -27,17 +28,10 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
   const [success, setSuccess] = useState<string | null>(null);
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [userBalance, setUserBalance] = useState<number>(0);
-  const [ethPrice, setEthPrice] = useState<number>(2000); // Default ETH price in USD
+  const [ethPrice, setEthPrice] = useState<number>(2000); 
   const [isLoadingBalance, setIsLoadingBalance] = useState<boolean>(false);
-  const [tokenPrice, setTokenPrice] = useState<number>(50); // Default price per token is $50
+  const [tokenPrice, setTokenPrice] = useState<number>(50); 
   const [totalTokens, setTotalTokens] = useState<number>(0);
-  
-  // Fixed token price in ETH as defined in the smart contract
-  const tokenPriceInEth = 50; // 50 $ per token
-  
-  // Calculate USD price based on current ETH price
-  const tokenPriceInUsd = tokenPriceInEth * ethPrice;
-  const totalCostInUsd = tokenPriceInUsd * tokenAmount;
   
   // Fetch ETH price
   useEffect(() => {
@@ -104,9 +98,8 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
       isMounted = false;
       clearTimeout(retryTimeout);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // ethPrice intentionally excluded due to isMounted handling retry logic
-  
+ 
+  }, [ethPrice]); 
   // Fetch token price and total tokens
   useEffect(() => {
     const fetchTokenDetails = async () => {
@@ -200,45 +193,55 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
         signer
       );
       
-      const tokenPriceWei = ethers.parseUnits(tokenPriceInEth.toString(), 'wei');
-      const totalCost = tokenPriceWei * BigInt(tokenAmount);
+      // Calculate cost exactly as the contract expects
+      const tokenPriceWei = ethers.parseUnits("50", 18); // 50 ETH per token in wei
+      const totalCostWei = tokenPriceWei * BigInt(tokenAmount);
       
       console.log(`Buying ${tokenAmount} tokens for property #${propertyId}`);
-      console.log(`Total cost: ${ethers.formatEther(totalCost)} ETH (approx. $${totalCostInUsd.toLocaleString()})`);
+      console.log(`Total cost: ${ethers.formatEther(totalCostWei)} ETH`);
       
       const tx = await contract.buyFromSale(propertyId, tokenAmount, {
-        value: totalCost
+        value: totalCostWei
       });
       
+      // Rest of the function remains the same
       const receipt = await tx.wait();
       
       setTransactionHash(receipt.hash);
-      setSuccess(`Successfully purchased ${tokenAmount} tokens for ${ethers.formatEther(totalCost)} ETH`);
+      setSuccess(`Successfully purchased ${tokenAmount} tokens for ${ethers.formatEther(totalCostWei)} ETH`);
       
       try {
-        const propertyOwner = await contract.getPropertyOwner(propertyId);
+        // Fetch property details to get the original owner
+        const propertyDetailsFromContract = await contract.properties(propertyId); 
+        const propertyOwner = propertyDetailsFromContract.originalOwner; 
         
         const notificationData = {
-          type: 'purchase',
+          type: 'TOKEN_PURCHASE', 
           propertyId: propertyId,
           tokenAmount: tokenAmount,
-          buyerAddress: account,
-          totalCost: ethers.formatEther(totalCost),
+          buyerAddress: account, 
+          totalCost: ethers.formatEther(totalCostWei),
           timestamp: new Date().toISOString(),
-          propertyAddress: property.address || "Property #" + propertyId,
+          propertyName: property.title || `Property #${propertyId}`,
           transactionHash: receipt.hash
         };
         
-        const allNotifications = JSON.parse(localStorage.getItem('propertyNotifications') || '{}');
-        
-        if (!allNotifications[propertyOwner]) {
-          allNotifications[propertyOwner] = [];
+        // Use addNotification from context
+        if (propertyOwner && propertyOwner !== ethers.ZeroAddress) {
+          addNotification(notificationData, propertyOwner);
+          console.log(`Notification sent to property owner ${propertyOwner}:`, notificationData);
+        } else {
+          console.warn("Could not determine property owner or owner is zero address. Notification not sent to owner.");
         }
-        
-        allNotifications[propertyOwner].push(notificationData);
-        localStorage.setItem('propertyNotifications', JSON.stringify(allNotifications));
-        
-        console.log(`Notification sent to property owner ${propertyOwner}:`, notificationData);
+
+        // Optionally, send a notification to the buyer as well
+        const buyerNotificationData = {
+          ...notificationData,
+          type: 'PURCHASE_CONFIRMATION', // Different type for buyer
+        };
+        addNotification(buyerNotificationData, account);
+        console.log(`Purchase confirmation notification sent to buyer ${account}:`, buyerNotificationData);
+
       } catch (notificationError) {
         console.error('Error creating notification:', notificationError);
       }

@@ -28,6 +28,8 @@ interface Property {
   images: string[];
   yearBuilt: number;
   featured: boolean;
+  documentURLs: string[];
+  originalOwner: string;
 }
 
 export default function FeaturedProperties() {
@@ -48,7 +50,26 @@ export default function FeaturedProperties() {
             provider
           );
 
-          const [propertyAddresses, values, , propertyImageURLs] = await contract.getProperties();
+          const [
+            propertyAddresses,
+            values,
+            ,
+            propertyImageURLsList,
+            documentURLs,
+            originalOwners,
+            titles,
+            descriptions,
+            propertyTypes,
+            apartmentTypes,
+            bedroomsList,
+            bathroomsList,
+            areas,
+            yearsBuilt,
+            cities,
+            states,
+            zipCodes,
+            amenitiesList
+          ] = await contract.getProperties();
           
           const propertyCount = Math.min(3, propertyAddresses ? propertyAddresses.length : 0);
           
@@ -59,7 +80,14 @@ export default function FeaturedProperties() {
 
           const formattedProperties = Array.from({ length: propertyCount }).map((_, index) => {
             // Process image URLs
-            const imageUrls = propertyImageURLs?.[index] || [];
+            let imageUrls = propertyImageURLsList?.[index];
+            if (!imageUrls) {
+              imageUrls = [];
+            } else if (typeof imageUrls === 'string') {
+              imageUrls = [imageUrls];
+            } else if (!Array.isArray(imageUrls)) {
+              imageUrls = [];
+            }
             const processedImages = imageUrls.map((url: string) => {
               if (!url) return null;
               if (url.startsWith('http')) return url;
@@ -67,31 +95,38 @@ export default function FeaturedProperties() {
                 return `https://gateway.pinata.cloud/ipfs/${url}`;
               }
               return url;
-            }).filter(Boolean); 
+            }).filter(Boolean);
+
+            // Ensure numeric values are properly converted
+            const bedroomValue = bedroomsList?.[index];
+            const bathroomValue = bathroomsList?.[index];
+            const areaValue = areas?.[index];
+            const yearValue = yearsBuilt?.[index];
 
             return {
               id: index,
-              title: propertyAddresses[index] || `Property ${index + 1}`,
-              description: "A beautiful property available for investment through blockchain technology.",
+              title: titles?.[index] || `Property ${index + 1}`,
+              description: descriptions?.[index] || '',
               price: Number(ethers.formatUnits(values[index], 18)),
-              bedrooms: 3,
-              bathrooms: 2,
-              area: 1500,
-              address: propertyAddresses[index] || "",
-              city: "butwal",
-              state: "palpa",
-              zipCode: "",
-              propertyType: "Apartment",
-              apartmentType: "",
-              amenities: ["Parking", "Security", "Garden"],
-              // Only use default image if no valid images are found
-              images: processedImages.length > 0 ? processedImages : ["/imageforLanding/house.jpg"],
-              yearBuilt: 2020,
-              featured: true
+              bedrooms: bedroomValue ? Number(bedroomValue) : 0,
+              bathrooms: bathroomValue ? Number(bathroomValue) : 0,
+              area: areaValue ? Number(areaValue) : 0,
+              address: propertyAddresses[index] || '',
+              city: cities?.[index] || '',
+              state: states?.[index] || '',
+              zipCode: zipCodes?.[index] || '',
+              propertyType: propertyTypes?.[index] || '',
+              apartmentType: apartmentTypes?.[index] || '',
+              amenities: amenitiesList?.[index] || [],
+              images: processedImages.length > 0 ? processedImages : ['/imageforLanding/house.jpg'],
+              yearBuilt: yearValue ? Number(yearValue) : 0,
+              featured: true,
+              documentURLs: documentURLs?.[index] || [],
+              originalOwner: originalOwners?.[index] || ''
             };
           });
           
-          console.log('Processed properties with images:', formattedProperties);
+          console.log('Processed properties:', formattedProperties);
           setFeaturedProperties(formattedProperties);
         }
       } catch (error) {
@@ -181,26 +216,28 @@ export default function FeaturedProperties() {
                 </div>
                 
                 <div className="p-6">
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{property.title}</h3>
+                      <h3 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1">{property.title}</h3>
                       <div className="flex items-center mt-1 text-gray-500">
                         <MapPin className="h-4 w-4 mr-1" />
-                        <p className="text-sm">{property.city}, {property.state}</p>
+                        <p className="text-gray-500 text-sm line-clamp-1">{[property.address, property.city, property.state, property.zipCode].filter(Boolean).join(', ')}</p>
                       </div>
                     </div>
+                    <div className="flex flex-col items-end gap-1">
+                      {property.propertyType && <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium mb-1">{property.propertyType}</span>}
+                      {property.apartmentType && <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-medium">{property.apartmentType}</span>}
+                    </div>
                   </div>
-                  
-                  <p className="text-gray-600 text-sm mt-4 line-clamp-2">{property.description}</p>
-                  
+                  {property.description && <p className="text-gray-600 text-sm mt-2 line-clamp-2">{property.description}</p>}
                   <div className="flex justify-between text-sm text-gray-600 mt-6 pb-6 border-b border-gray-100">
                     <div className="flex items-center">
                       <Bed className="h-4 w-4 mr-1 text-blue-500" />
-                      <span>{property.bedrooms === 0 ? 'Studio' : `${property.bedrooms} Bed${property.bedrooms > 1 ? 's' : ''}`}</span>
+                      <span>{property.bedrooms} Beds</span>
                     </div>
                     <div className="flex items-center">
                       <Bath className="h-4 w-4 mr-1 text-blue-500" />
-                      <span>{property.bathrooms} Bath{property.bathrooms > 1 ? 's' : ''}</span>
+                      <span>{property.bathrooms} Baths</span>
                     </div>
                     <div className="flex items-center">
                       <Square className="h-4 w-4 mr-1 text-blue-500" />

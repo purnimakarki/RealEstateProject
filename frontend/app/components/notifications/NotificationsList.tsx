@@ -111,6 +111,8 @@ export default function NotificationsList({ notifications: propNotifications, on
                 <p className="text-white font-medium truncate">
                   {(notification.type === 'TOKEN_PURCHASE' || notification.type === 'purchase')
                     ? `Your property has been bought!`
+                    : notification.type === 'PURCHASE_CONFIRMATION'
+                    ? `Purchase Confirmation`
                     : 'New notification'}
                 </p>
                 <span className="text-xs text-gray-400 whitespace-nowrap ml-2">

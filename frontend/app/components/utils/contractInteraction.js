@@ -77,38 +77,6 @@ export const getAllProperties = async () => {
 };
 
 // Buy tokens from initial sale
-// export const buyTokensFromSale = async (propertyId, tokenAmount) => {
-//   try {
-//     if (!tokenAmount || tokenAmount <= 0) {
-//       throw new Error("Token amount must be greater than 0");
-//     }
-
-//     const contract = await getFactoryContract(true);
-    
-//     // Calculate cost exactly as the contract expects
-//     // $50 per token converted to wei (10^18)
-//     const tokenPriceWei = ethers.parseUnits("50", 18);
-//     const totalCost = tokenPriceWei * BigInt(tokenAmount);
-
-//     console.log(`Buying ${tokenAmount} tokens for property #${propertyId}`);
-//     console.log(`Total cost: ${ethers.formatEther(totalCost)} ETH`);
-    
-//     const tx = await contract.buyFromSale(propertyId, tokenAmount, {
-//       value: totalCost,
-//     });
-
-//     const receipt = await tx.wait();
-//     return {
-//       success: true,
-//       transactionHash: receipt.hash,
-//       tokenAmount: tokenAmount
-//     };
-//   } catch (error) {
-//     console.error("Error buying tokens from sale:", error);
-//     throw error;
-//   }
-// };
-
 export const buyTokensFromSale = async (propertyId, tokenAmount) => {
   try {
     if (!tokenAmount || tokenAmount <= 0) {
@@ -116,21 +84,17 @@ export const buyTokensFromSale = async (propertyId, tokenAmount) => {
     }
 
     const contract = await getFactoryContract(true);
+    
+    // Calculate cost exactly as the contract expects
+    // $50 per token converted to wei (10^18)
+    const tokenPriceWei = ethers.parseUnits("50", 18);
+    const totalCost = tokenPriceWei * BigInt(tokenAmount);
 
-    // Fetch live ETH price in USD
-    const ethPrice = await getEthToUsdRate(); // e.g., 2638.98
-
-    // Calculate USD cost
-    const usdCost = 50 * tokenAmount;
-
-    // Convert USD to ETH
-    const ethCost = usdCost / ethPrice;
-
-    // Convert ETH to Wei
-    const totalCostWei = ethers.parseEther(ethCost.toFixed(18));
-
+    console.log(`Buying ${tokenAmount} tokens for property #${propertyId}`);
+    console.log(`Total cost: ${ethers.formatEther(totalCost)} ETH`);
+    
     const tx = await contract.buyFromSale(propertyId, tokenAmount, {
-      value: totalCostWei,
+      value: totalCost,
     });
 
     const receipt = await tx.wait();
@@ -146,62 +110,41 @@ export const buyTokensFromSale = async (propertyId, tokenAmount) => {
 };
 
 // Enhanced function to buy tokens from a listing
-// export const buyTokensFromListingv2 = async (propertyId, listingIndex) => {
-//   try {
-//     const contract = await getFactoryContract(true);
-//     const listings = await contract.getListings(propertyId);
-    
-//     if (listingIndex >= listings.length) {
-//       throw new Error("Invalid listing index");
-//     }
-    
-//     const listing = listings[listingIndex];
-    
-//     // Calculate total cost
-//     const tokenAmount = Number(listing.tokenAmount);
-//     const pricePerToken = ethers.formatUnits(listing.pricePerToken, 18);
-//     const totalCostUSD = tokenAmount * Number(pricePerToken);
-    
-//     // Convert USD to ETH
-//     const ethRate = await getEthToUsdRate();
-//     const costInEth = totalCostUSD / ethRate;
-//     const totalCost = ethers.parseEther(costInEth.toString());
-
-//     console.log(`Buying ${tokenAmount} tokens from listing #${listingIndex}`);
-//     console.log(`Total cost: $${totalCostUSD} (${costInEth} ETH)`);
-    
-//     const tx = await contract.buyFromListing(propertyId, listingIndex, {
-//       value: totalCost,
-//     });
-    
-//     const receipt = await tx.wait();
-//     return {
-//       success: true,
-//       transactionHash: receipt.hash,
-//       tokenAmount: tokenAmount,
-//       seller: listing.seller
-//     };
-//   } catch (error) {
-//     console.error("Error buying tokens from listing:", error);
-//     throw error;
-//   }
-// };
-
-export const buyTokensFromListingv2 = async (propertyId, listingIndex) => {
+export const buyTokensFromListingV2 = async (propertyId, listingIndex) => {
   try {
     const contract = await getFactoryContract(true);
     const listings = await contract.getListings(propertyId);
-
-    if (listingIndex >= listings.length) throw new Error("Invalid listing index");
-
+    
+    if (listingIndex >= listings.length) {
+      throw new Error("Invalid listing index");
+    }
+    
     const listing = listings[listingIndex];
-    // Use the exact price from the listing (wei)
-    const totalCost = listing.tokenAmount * listing.pricePerToken;
+    
+    // Calculate total cost
+    const tokenAmount = Number(listing.tokenAmount);
+    const pricePerToken = ethers.formatUnits(listing.pricePerToken, 18);
+    const totalCostUSD = tokenAmount * Number(pricePerToken);
+    
+    // Convert USD to ETH
+    const ethRate = await getEthToUsdRate();
+    const costInEth = totalCostUSD / ethRate;
+    const totalCost = ethers.parseEther(costInEth.toString());
 
+    console.log(`Buying ${tokenAmount} tokens from listing #${listingIndex}`);
+    console.log(`Total cost: $${totalCostUSD} (${costInEth} ETH)`);
+    
     const tx = await contract.buyFromListing(propertyId, listingIndex, {
       value: totalCost,
     });
-    return await tx.wait();
+    
+    const receipt = await tx.wait();
+    return {
+      success: true,
+      transactionHash: receipt.hash,
+      tokenAmount: tokenAmount,
+      seller: listing.seller
+    };
   } catch (error) {
     console.error("Error buying tokens from listing:", error);
     throw error;
@@ -470,19 +413,38 @@ export const getPendingProperties = async () => {
     const formattedPendingProps = pendingProps[1].map((prop, index) => {
       // Add null checks for each property
       if (!prop) return null;
-      
       // Check if value exists before formatting
       const formattedValue = prop.value ? ethers.formatUnits(prop.value, 18) : '0';
-      
+      // Format image and document URLs
+      const processedImageURLs = (prop.propertyImageURLs || []).map((url) =>
+        typeof url === 'string' && (url.startsWith('http') || url.startsWith('/')) ? url : `https://gateway.pinata.cloud/ipfs/${url}`
+      );
+      const processedDocumentURLs = (prop.documentURLs || []).map((url) =>
+        typeof url === 'string' && (url.startsWith('http') || url.startsWith('/')) ? url : `https://gateway.pinata.cloud/ipfs/${url}`
+      );
       return {
         index,
         propertyAddress: prop.propertyAddress || '',
         value: formattedValue,
         originalOwner: prop.originalOwner || '',
-        propertyImageURLs: prop.propertyImageURLs || [],
+        propertyImageURLs: processedImageURLs,
+        documentURLs: processedDocumentURLs,
         approved: prop.approved || false,
         exists: prop.exists || false,
-        contractIndex: pendingProps[0][index] // Use the correct index from the IDs array
+        contractIndex: pendingProps[0][index], // Use the correct index from the IDs array
+        // Map all additional fields from the contract struct
+        title: prop.title || '',
+        description: prop.description || '',
+        propertyType: prop.propertyType || '',
+        apartmentType: prop.apartmentType || '',
+        bedrooms: prop.bedrooms !== undefined ? Number(prop.bedrooms) : '',
+        bathrooms: prop.bathrooms !== undefined ? Number(prop.bathrooms) : '',
+        area: prop.area !== undefined ? Number(prop.area) : '',
+        yearBuilt: prop.yearBuilt !== undefined ? Number(prop.yearBuilt) : '',
+        city: prop.city || '',
+        state: prop.state || '',
+        zipCode: prop.zipCode || '',
+        amenities: prop.amenities || [],
       };
     }).filter(Boolean); // Remove null entries
     
@@ -680,5 +642,107 @@ export const navigateToOwnerProfile = async (propertyId) => {
   } catch (error) {
     console.error("Error navigating to owner profile:", error);
     throw error;
+  }
+};
+
+// Get properties submitted by a specific user
+export const getUserSubmittedProperties = async (userAddress) => {
+  try {
+    const contract = await getFactoryContract();
+    
+    // Get all pending properties
+    const pendingProps = await contract.getPendingProperties();
+    const pendingProperties = pendingProps[1].map((prop, index) => {
+      if (!prop) return null;
+      
+      const formattedValue = prop.value ? ethers.formatUnits(prop.value, 18) : '0';
+      
+      return {
+        id: index,
+        propertyAddress: prop.propertyAddress || '',
+        value: formattedValue,
+        originalOwner: prop.originalOwner || '',
+        propertyImageURLs: prop.propertyImageURLs || [],
+        approved: prop.approved || false,
+        exists: prop.exists || false,
+        contractIndex: pendingProps[0][index],
+        status: 'pending'
+      };
+    }).filter(Boolean);
+    
+    // Get all approved properties
+    const [
+      propertyAddresses,
+      values,
+      tokenAddresses,
+      propertyImageURLs,
+      documentURLs,
+      originalOwners,
+      ,
+      ,
+      ,
+      ,
+      bedrooms,
+      bathrooms,
+      ,
+      ,
+      ,
+      ,
+      ,
+      
+    ] = await contract.getProperties();
+
+    const approvedProperties = [];
+    for (let i = 0; i < propertyAddresses.length; i++) {
+      approvedProperties.push({
+        id: i,
+        propertyAddress: propertyAddresses[i],
+        value: ethers.formatUnits(values[i], 18),
+        tokenAddress: tokenAddresses[i],
+        propertyImageURLs: propertyImageURLs[i] || [],
+        documentURLs: documentURLs[i] || [],
+        originalOwner: originalOwners ? originalOwners[i] : '',
+        bedrooms: bedrooms[i] !== undefined ? Number(bedrooms[i]) : 0,
+        bathrooms: bathrooms[i] !== undefined ? Number(bathrooms[i]) : 0,
+        status: 'approved'
+      });
+    }
+    
+    let rejectedProperties = [];
+    try {
+      // Check if the contract has a method to get rejected properties
+      if (contract.getRejectedProperties) {
+        const rejected = await contract.getRejectedProperties();
+        rejectedProperties = rejected.map((prop, index) => ({
+          id: index,
+          propertyAddress: prop.propertyAddress || '',
+          value: prop.value ? ethers.formatUnits(prop.value, 18) : '0',
+          originalOwner: prop.originalOwner || '',
+          propertyImageURLs: prop.propertyImageURLs || [],
+          status: 'rejected'
+        }));
+      }
+    } catch (err) {
+      console.log("Contract doesn't support getRejectedProperties or other error:", err);
+    }
+    
+    // Filter properties by user address
+    const userPendingProperties = pendingProperties.filter(
+      prop => prop.originalOwner && prop.originalOwner.toLowerCase() === userAddress.toLowerCase()
+    );
+    
+    const userApprovedProperties = approvedProperties.filter(
+      prop => prop.originalOwner && typeof prop.originalOwner === 'string' && prop.originalOwner.toLowerCase() === userAddress.toLowerCase()
+    );
+    
+    const userRejectedProperties = rejectedProperties.filter(
+      prop => prop.originalOwner && typeof prop.originalOwner === 'string' && prop.originalOwner.toLowerCase() === userAddress.toLowerCase()
+    );
+    
+    // Combine all user properties
+    return [...userPendingProperties, ...userApprovedProperties, ...userRejectedProperties];
+  } catch (error) {
+    console.error("Error fetching user submitted properties:", error);
+    return [];
   }
 };

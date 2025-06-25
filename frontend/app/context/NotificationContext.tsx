@@ -31,8 +31,9 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
     try {
       if (!account) return;
 
+      const normalizedAccount = account.toLowerCase(); // Normalize account
       const allNotifications = JSON.parse(localStorage.getItem('propertyNotifications') || '{}');
-      const userNotifications = allNotifications[account] || [];
+      const userNotifications = allNotifications[normalizedAccount] || []; // Use normalized account
 
       userNotifications.sort((a: Notification, b: Notification) =>
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
@@ -40,7 +41,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
 
       setNotifications(userNotifications);
 
-      const readStatus = JSON.parse(localStorage.getItem(`notificationsRead_${account}`) || '{}');
+      const readStatus = JSON.parse(localStorage.getItem(`notificationsRead_${normalizedAccount}`) || '{}'); // Use normalized account
       const newUnreadCount = userNotifications.filter(
         (n: Notification) => !readStatus[n.timestamp]
       ).length;
@@ -68,9 +69,10 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
     if (!account) return;
 
     try {
-      const readStatus = JSON.parse(localStorage.getItem(`notificationsRead_${account}`) || '{}');
+      const normalizedAccount = account.toLowerCase(); // Normalize account
+      const readStatus = JSON.parse(localStorage.getItem(`notificationsRead_${normalizedAccount}`) || '{}'); // Use normalized account
       readStatus[timestamp] = true;
-      localStorage.setItem(`notificationsRead_${account}`, JSON.stringify(readStatus));
+      localStorage.setItem(`notificationsRead_${normalizedAccount}`, JSON.stringify(readStatus)); // Use normalized account
 
       const newUnreadCount = notifications.filter(n => !readStatus[n.timestamp]).length;
       setUnreadCount(newUnreadCount);
@@ -83,11 +85,12 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
     if (!account) return;
 
     try {
+      const normalizedAccount = account.toLowerCase(); // Normalize account
       const readStatus: Record<string, boolean> = {};
       notifications.forEach(n => {
         readStatus[n.timestamp] = true;
       });
-      localStorage.setItem(`notificationsRead_${account}`, JSON.stringify(readStatus));
+      localStorage.setItem(`notificationsRead_${normalizedAccount}`, JSON.stringify(readStatus)); // Use normalized account
       setUnreadCount(0);
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
@@ -96,16 +99,17 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
 
   const addNotification = (notification: Notification, recipientAddress: string) => {
     try {
+      const normalizedRecipientAddress = recipientAddress.toLowerCase(); // Normalize recipient address
       const allNotifications = JSON.parse(localStorage.getItem('propertyNotifications') || '{}');
-      const userNotifications = allNotifications[recipientAddress] || [];
+      const userNotifications = allNotifications[normalizedRecipientAddress] || []; // Use normalized recipient address
 
       const updatedNotifications = [notification, ...userNotifications];
-      allNotifications[recipientAddress] = updatedNotifications;
+      allNotifications[normalizedRecipientAddress] = updatedNotifications; // Use normalized recipient address
 
       localStorage.setItem('propertyNotifications', JSON.stringify(allNotifications));
 
       // If the notification is for the currently logged-in user, update state
-      if (account === recipientAddress) {
+      if (account && account.toLowerCase() === normalizedRecipientAddress) { // Compare normalized accounts
         setNotifications(updatedNotifications);
         setUnreadCount(prev => prev + 1);
       }

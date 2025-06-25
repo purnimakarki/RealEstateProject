@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 
 interface PropertyFormProps {
@@ -39,7 +39,8 @@ export default function PropertyForm({
   handleBlur,
   handleAmenityToggle,
 }: PropertyFormProps) {
-  
+  const [customAmenity, setCustomAmenity] = useState('');
+
   // Available apartment types
   const apartmentTypes = [
     'Studio', '1 Bedroom', '2 Bedroom', '3 Bedroom', '4+ Bedroom',
@@ -56,7 +57,7 @@ export default function PropertyForm({
   const renderError = (fieldName: string) => {
     if (touched[fieldName] && errors[fieldName]) {
       return (
-        <div className="text-red-500 text-sm mt-1 flex items-center">
+        <div className="text-red-400 text-sm mt-1 flex items-center">
           <AlertTriangle className="h-3 w-3 mr-1" />
           {errors[fieldName]}
         </div>
@@ -69,10 +70,10 @@ export default function PropertyForm({
     case 1:
       return (
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Basic Information</h2>
+          <h2 className="sell-glass-section-title">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="apartmentType" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="apartmentType" className="sell-glass-label">
                 Apartment Type*
               </label>
               <select
@@ -82,7 +83,7 @@ export default function PropertyForm({
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 required
-                className={`w-full px-4 py-2 border ${touched.apartmentType && errors.apartmentType ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900`}
+                className={`sell-glass-select ${touched.apartmentType && errors.apartmentType ? 'border-red-400' : ''}`}
               >
                 <option value="">Select Apartment Type</option>
                 {apartmentTypes.map(type => (
@@ -93,7 +94,7 @@ export default function PropertyForm({
             </div>
 
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="title" className="sell-glass-label">
                 Listing Title*
               </label>
               <input
@@ -105,13 +106,13 @@ export default function PropertyForm({
                 onBlur={handleBlur}
                 required
                 placeholder="e.g. Modern Downtown Apartment"
-                className={`w-full px-4 py-2 border ${touched.title && errors.title ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400`}
+                className={`sell-glass-input ${touched.title && errors.title ? 'border-red-400' : ''}`}
               />
               {renderError('title')}
             </div>
 
             <div className="md:col-span-2">
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="description" className="sell-glass-label">
                 Description*
               </label>
               <textarea
@@ -123,13 +124,13 @@ export default function PropertyForm({
                 required
                 rows={4}
                 placeholder="Describe your apartment in detail..."
-                className={`w-full px-4 py-2 border ${touched.description && errors.description ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400`}
+                className={`sell-glass-textarea ${touched.description && errors.description ? 'border-red-400' : ''}`}
               />
               {renderError('description')}
             </div>
 
             <div>
-              <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="price" className="sell-glass-label">
                 Price (USD)*
               </label>
               <input
@@ -142,13 +143,13 @@ export default function PropertyForm({
                 required
                 min="0"
                 placeholder="e.g. 450000"
-                className={`w-full px-4 py-2 border ${touched.price && errors.price ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400`}
+                className={`sell-glass-input ${touched.price && errors.price ? 'border-red-400' : ''}`}
               />
               {renderError('price')}
             </div>
 
             <div>
-              <label htmlFor="yearBuilt" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="yearBuilt" className="sell-glass-label">
                 Year Built
               </label>
               <input
@@ -160,7 +161,7 @@ export default function PropertyForm({
                 min="1900"
                 max={new Date().getFullYear()}
                 placeholder="e.g. 2010"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400"
+                className="sell-glass-input"
               />
             </div>
           </div>
@@ -170,10 +171,10 @@ export default function PropertyForm({
     case 2:
       return (
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Apartment Details</h2>
+          <h2 className="text-xl font-semibold text-white mb-4">Apartment Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <label htmlFor="bedrooms" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="bedrooms" className="block text-sm font-medium text-white mb-1">
                 Bedrooms*
               </label>
               <input
@@ -186,13 +187,13 @@ export default function PropertyForm({
                 required
                 min="0"
                 placeholder="e.g. 2"
-                className={`w-full px-4 py-2 border ${touched.bedrooms && errors.bedrooms ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400`}
+                className={`w-full px-4 py-2 border ${touched.bedrooms && errors.bedrooms ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-white bg-transparent`}
               />
               {renderError('bedrooms')}
             </div>
 
             <div>
-              <label htmlFor="bathrooms" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="bathrooms" className="block text-sm font-medium text-white  mb-1">
                 Bathrooms*
               </label>
               <input
@@ -206,13 +207,13 @@ export default function PropertyForm({
                 min="0"
                 step="0.5"
                 placeholder="e.g. 1"
-                className={`w-full px-4 py-2 border ${touched.bathrooms && errors.bathrooms ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400`}
+                className={`w-full px-4 py-2 border ${touched.bathrooms && errors.bathrooms ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-white bg-transparent`}
               />
               {renderError('bathrooms')}
             </div>
 
             <div>
-              <label htmlFor="area" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="area" className="block text-sm font-medium text-white mb-1">
                 Area (sq ft)*
               </label>
               <input
@@ -225,13 +226,13 @@ export default function PropertyForm({
                 required
                 min="0"
                 placeholder="e.g. 1200"
-                className={`w-full px-4 py-2 border ${touched.area && errors.area ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400`}
+                className={`w-full px-4 py-2 border ${touched.area && errors.area ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-white bg-transparent`}
               />
               {renderError('area')}
             </div>
 
             <div>
-              <label htmlFor="floor" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="floor" className="block text-sm font-medium text-white mb-1">
                 Floor Number
               </label>
               <input
@@ -242,12 +243,12 @@ export default function PropertyForm({
                 onChange={handleInputChange}
                 min="0"
                 placeholder="e.g. 3"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-white bg-transparent"
               />
             </div>
 
             <div>
-              <label htmlFor="totalFloors" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="totalFloors" className="block text-sm font-medium text-white mb-1">
                 Total Floors in Building
               </label>
               <input
@@ -258,7 +259,7 @@ export default function PropertyForm({
                 onChange={handleInputChange}
                 min="1"
                 placeholder="e.g. 10"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-white bg-transparent"
               />
             </div>
           </div>
@@ -268,10 +269,10 @@ export default function PropertyForm({
     case 3:
       return (
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Location</h2>
+          <h2 className="text-xl font-semibold text-white  mb-4">Location</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="address" className="block text-sm font-medium text-white  mb-1">
                 Street Address*
               </label>
               <input
@@ -283,13 +284,13 @@ export default function PropertyForm({
                 onBlur={handleBlur}
                 required
                 placeholder="e.g. 123 Main Street, Apt 4B"
-                className={`w-full px-4 py-2 border ${touched.address && errors.address ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400`}
+                className={`w-full px-4 py-2 border ${touched.address && errors.address ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-white bg-transparent`}
               />
               {renderError('address')}
             </div>
 
             <div>
-              <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="city" className="block text-sm font-medium text-white  mb-1">
                 City*
               </label>
               <input
@@ -301,13 +302,13 @@ export default function PropertyForm({
                 onBlur={handleBlur}
                 required
                 placeholder="e.g. San Francisco"
-                className={`w-full px-4 py-2 border ${touched.city && errors.city ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400`}
+                className={`w-full px-4 py-2 border ${touched.city && errors.city ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-white bg-transparent`}
               />
               {renderError('city')}
             </div>
 
             <div>
-              <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="state" className="block text-sm font-medium text-white  mb-1">
                 State/Province*
               </label>
               <input
@@ -319,13 +320,13 @@ export default function PropertyForm({
                 onBlur={handleBlur}
                 required
                 placeholder="e.g. California"
-                className={`w-full px-4 py-2 border ${touched.state && errors.state ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400`}
+                className={`w-full px-4 py-2 border ${touched.state && errors.state ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-white bg-transparent`}
               />
               {renderError('state')}
             </div>
 
             <div>
-              <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="zipCode" className="block text-sm font-medium text-white  mb-1">
                 ZIP/Postal Code*
               </label>
               <input
@@ -337,7 +338,7 @@ export default function PropertyForm({
                 onBlur={handleBlur}
                 required
                 placeholder="e.g. 94105"
-                className={`w-full px-4 py-2 border ${touched.zipCode && errors.zipCode ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400`}
+                className={`w-full px-4 py-2 border ${touched.zipCode && errors.zipCode ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-white bg-transparent`}
               />
               {renderError('zipCode')}
             </div>
@@ -348,9 +349,9 @@ export default function PropertyForm({
     case 4:
       return (
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Amenities</h2>
+          <h2 className="text-xl font-semibold text-white  mb-4">Amenities</h2>
           <div className="mb-6">
-            <h3 className="text-lg font-medium text-gray-700 mb-3">Select Available Amenities</h3>
+            <h3 className="text-lg font-medium text-white  mb-3">Select Available Amenities</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {availableAmenities.map(amenity => (
                 <div key={amenity} className="flex items-center">
@@ -361,11 +362,60 @@ export default function PropertyForm({
                     onChange={() => handleAmenityToggle(amenity)}
                     className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
-                  <label htmlFor={`amenity-${amenity}`} className="ml-2 text-sm text-gray-700">
+                  <label htmlFor={`amenity-${amenity}`} className="ml-2 text-sm text-white ">
                     {amenity}
                   </label>
                 </div>
               ))}
+            </div>
+            {/* Other Amenity Option */}
+            <div className="mt-6">
+              <label className="block text-sm font-medium text-white mb-2">Other Amenities</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={customAmenity}
+                  onChange={e => setCustomAmenity(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && customAmenity.trim()) {
+                      e.preventDefault();
+                      if (!formData.amenities.includes(customAmenity.trim())) {
+                        handleAmenityToggle(customAmenity.trim());
+                      }
+                      setCustomAmenity('');
+                    }
+                  }}
+                  placeholder="Add custom amenity and press Enter"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-white bg-transparent"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (customAmenity.trim() && !formData.amenities.includes(customAmenity.trim())) {
+                      handleAmenityToggle(customAmenity.trim());
+                      setCustomAmenity('');
+                    }
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Add
+                </button>
+              </div>
+              {/* Show custom amenities as chips */}
+              <div className="flex flex-wrap gap-2 mt-3">
+                {formData.amenities.filter(a => !availableAmenities.includes(a)).map((amenity: string) => (
+                  <span key={amenity} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center gap-1">
+                    {amenity}
+                    <button
+                      type="button"
+                      onClick={() => handleAmenityToggle(amenity)}
+                      className="ml-1 text-blue-600 hover:text-red-500"
+                    >
+                      &times;
+                    </button>
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>

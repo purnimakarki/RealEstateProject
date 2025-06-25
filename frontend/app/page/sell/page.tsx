@@ -12,6 +12,7 @@ import FormNavigation from './components/FormNavigation';
 import ProgressBar from './components/ProgressBar';
 import SuccessMessage from './components/SuccessMessage';
 import ErrorMessage from './components/ErrorMessage';
+import DocumentUploader from './components/DocumentUploader';
 
 export default function SellPage() {
   // Form state
@@ -38,16 +39,22 @@ export default function SellPage() {
   const [images, setImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [ipfsHashes, setIpfsHashes] = useState<string[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  // Document upload state
+  const [documents, setDocuments] = useState<File[]>([]);
+  const [documentHashes, setDocumentHashes] = useState<string[]>([]);
+
+  // Form validation state
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   // Step navigation state
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
 
-  // Form validation state
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  // Form submission state
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -64,6 +71,12 @@ export default function SellPage() {
       return;
     }
 
+    // Check if documents are uploaded
+    if (documents.length === 0) {
+      setErrors((prev) => ({ ...prev, documents: 'Please upload at least one document' }));
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
@@ -77,6 +90,15 @@ export default function SellPage() {
 
       setIpfsHashes(hashes);
 
+      // Upload documents to IPFS
+      const docHashes = await Promise.all(
+        documents.map(async (doc) => {
+          return await uploadToIPFS(doc);
+        })
+      );
+
+      setDocumentHashes(docHashes);
+
       // Submit property data to blockchain
       const { ethereum } = window as any;
 
@@ -86,20 +108,46 @@ export default function SellPage() {
         const factoryContractAddress = contractAddress.RealEstateTokenFactory;
         const contract = new ethers.Contract(factoryContractAddress, RealEstateTokenFactoryABI, signer);
 
-        // Create property object
+        // Create property object with all details
         const propertyData = {
-          address: `${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}`,
-          valueUSD: ethers.parseUnits(formData.price, 18),
-          imageUrls: hashes.map((hash) => hash),
+          propertyAddress: `${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}`,
+          valueUSD: ethers.parseUnits(formData.price, 18), 
+          imageUrls: hashes,
+          documentUrls: docHashes,
+          title: formData.title,
+          description: formData.description,
+          bedrooms: parseInt(formData.bedrooms, 10),
+          bathrooms: parseInt(formData.bathrooms, 10),
+          area: parseInt(formData.area, 10),
+          yearBuilt: parseInt(formData.yearBuilt, 10),
+          city: formData.city,
+          state: formData.state,
+          zipCode: formData.zipCode,
+          propertyType: formData.propertyType,
+          apartmentType: formData.apartmentType,
+          amenities: formData.amenities, // Pass amenities as an array
         };
 
         console.log('Submitting property for approval:', propertyData);
 
-        // Submit property for approval
+        // Submit property for approval with all new fields
         const tx = await contract.submitPropertyForApproval(
-          propertyData.address,
+          propertyData.propertyAddress,
           propertyData.valueUSD,
-          propertyData.imageUrls
+          propertyData.imageUrls,
+          propertyData.documentUrls,
+          propertyData.title,
+          propertyData.description,
+          propertyData.propertyType, 
+          propertyData.apartmentType, 
+          propertyData.bedrooms,
+          propertyData.bathrooms,
+          propertyData.area,
+          propertyData.yearBuilt,
+          propertyData.city,
+          propertyData.state,
+          propertyData.zipCode,
+          propertyData.amenities
         );
 
         await tx.wait();
@@ -138,6 +186,7 @@ export default function SellPage() {
     });
     setImages([]);
     setPreviewUrls([]);
+    setDocuments([]);
     setCurrentStep(1);
   };
 
@@ -281,11 +330,53 @@ export default function SellPage() {
     }
   };
 
+  // Handle document upload
+  const handleDocumentUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      setDocuments((prev) => [...prev, ...newFiles]);
+      // Clear any document-related errors when documents are uploaded
+      if (errors.documents) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.documents;
+          return newErrors;
+        });
+      }
+      if (submitStatus === 'error') {
+        setSubmitStatus('idle');
+      }
+    }
+  };
+
+  // Remove a document
+  const removeDocument = (index: number) => {
+    setDocuments((prev) => prev.filter((_, i) => i !== index));
+    if (documentHashes.length > index) {
+      setDocumentHashes((prev) => prev.filter((_, i) => i !== index));
+    }
+  };
+
   // Navigation functions
   const nextStep = () => {
     if (validateStep(currentStep)) {
       if (currentStep < totalSteps) {
         setCurrentStep(currentStep + 1);
+        // Reset touched for the next step's fields
+        const stepFields: Record<number, string[]> = {
+          1: ['apartmentType', 'title', 'description', 'price'],
+          2: ['bedrooms', 'bathrooms', 'area'],
+          3: ['address', 'city', 'state', 'zipCode'],
+          4: [],
+        };
+        const nextStepFields = stepFields[currentStep + 1] || [];
+        setTouched((prev) => {
+          const updated = { ...prev };
+          nextStepFields.forEach((field) => {
+            updated[field] = false;
+          });
+          return updated;
+        });
         if (submitStatus === 'error') {
           setSubmitStatus('idle');
         }
@@ -305,18 +396,25 @@ export default function SellPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="sell-page-background">
       <Navbar />
       <div className="pt-24 pb-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold text-white mb-6">List Your Property</h1>
 
-          <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
+          <div className="sell-glass-progress-container">
+            <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
+          </div>
 
           {submitStatus === 'success' ? (
-            <SuccessMessage resetForm={resetForm} />
+            <div className="sell-glass-container">
+              <SuccessMessage 
+                resetForm={resetForm} 
+                setSubmitStatus={setSubmitStatus} 
+              />
+            </div>
           ) : (
-            <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-8">
+            <form onSubmit={handleSubmit} className="sell-glass-container">
               {submitStatus === 'error' && (
                 <ErrorMessage message="There was an error submitting your property. Please try again." />
               )}
@@ -330,6 +428,7 @@ export default function SellPage() {
                 handleInputChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
                   const { name, value } = e.target;
                   setFormData((prev) => ({ ...prev, [name]: value }));
+                  setTouched((prev) => ({ ...prev, [name]: true }));
                   validateField(name, value);
                 }}
                 handleBlur={(e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -342,18 +441,30 @@ export default function SellPage() {
               />
 
               {currentStep === 4 && (
-                <ImageUploader
-                  images={images}
-                  previewUrls={previewUrls}
-                  setImages={setImages}
-                  setPreviewUrls={setPreviewUrls}
-                  errors={errors}
-                  setErrors={setErrors}
-                  submitStatus={submitStatus}
-                  setSubmitStatus={setSubmitStatus}
-                  handleImageUpload={handleImageUpload}
-                  removeImage={removeImage}
-                />
+                <>
+                  <ImageUploader
+                    images={images}
+                    previewUrls={previewUrls}
+                    setImages={setImages}
+                    setPreviewUrls={setPreviewUrls}
+                    errors={errors}
+                    setErrors={setErrors}
+                    submitStatus={submitStatus}
+                    setSubmitStatus={setSubmitStatus}
+                    handleImageUpload={handleImageUpload}
+                    removeImage={removeImage}
+                  />
+                  <DocumentUploader
+                    documents={documents}
+                    setDocuments={setDocuments}
+                    errors={errors}
+                    setErrors={setErrors}
+                    submitStatus={submitStatus}
+                    setSubmitStatus={setSubmitStatus}
+                    handleDocumentUpload={handleDocumentUpload}
+                    removeDocument={removeDocument}
+                  />
+                </>
               )}
 
               <FormNavigation

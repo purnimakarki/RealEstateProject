@@ -6,16 +6,30 @@ import {
   getPendingProperties 
 } from '../components/utils/contractInteraction';
 
-type Property = {
+export type Property = { // Added export here
   id: number;
   propertyAddress: string;
   value: string;
   tokenAddress: string;
   propertyImageURLs: string[];
+  documentURLs?: string[];
   status: 'pending' | 'approved' | 'rejected';
-  originalIndex?: number; // Original index from the UI
-  contractIndex?: number; // Index to use with the contract
-  originalOwner?: string; // Add the original owner address
+  originalIndex?: number; 
+  contractIndex?: number; 
+  originalOwner?: string; 
+  title?: string;
+  description?: string;
+  apartmentType?: string;
+  bedrooms?: number | string; 
+  bathrooms?: number | string; 
+  area?: number | string;
+  // Add all fields from the contract struct
+  propertyType?: string;
+  yearBuilt?: number | string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  amenities?: string[];
 };
 
 type PropertyContextType = {
@@ -85,17 +99,34 @@ export const PropertyProvider = ({ children }: { children: React.ReactNode }) =>
           const processedImageURLs = (prop.propertyImageURLs || []).map((url: string) =>
             typeof url === 'string' && (url.startsWith('http') || url.startsWith('/')) ? url : `https://gateway.pinata.cloud/ipfs/${url}`
           );
-          
+          // Process documentURLs to ensure they are valid URLs
+          const processedDocumentURLs = (prop.documentURLs || []).map((url: string) =>
+            typeof url === 'string' && (url.startsWith('http') || url.startsWith('/')) ? url : `https://gateway.pinata.cloud/ipfs/${url}`
+          );
           return {
             id: index,
             propertyAddress: prop?.propertyAddress || 'No Address Provided',
             value: prop?.value || '0',
             tokenAddress: '',  
             propertyImageURLs: processedImageURLs,
+            documentURLs: processedDocumentURLs,
             status: 'pending' as const,
             originalIndex: index, // Store the UI index
             contractIndex: prop?.contractIndex || index,
-            originalOwner: prop?.originalOwner || '' 
+            originalOwner: prop?.originalOwner || '', 
+            // Map new fields, defaulting to undefined if not present in prop
+            title: prop?.title,
+            description: prop?.description,
+            apartmentType: prop?.apartmentType,
+            bedrooms: prop?.bedrooms,
+            bathrooms: prop?.bathrooms,
+            area: prop?.area,
+            propertyType: prop?.propertyType,
+            yearBuilt: prop?.yearBuilt,
+            city: prop?.city,
+            state: prop?.state,
+            zipCode: prop?.zipCode,
+            amenities: prop?.amenities,
           };
         });
       

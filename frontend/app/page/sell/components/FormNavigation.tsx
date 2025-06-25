@@ -22,7 +22,7 @@ export default function FormNavigation({
         <button
           type="button"
           onClick={prevStep}
-          className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+          className="sell-glass-button sell-glass-button-secondary flex items-center"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Previous
@@ -35,7 +35,7 @@ export default function FormNavigation({
         <button
           type="button"
           onClick={nextStep}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="sell-glass-button flex items-center"
         >
           Next
           <ArrowRight className="h-4 w-4 ml-2" />
@@ -44,11 +44,7 @@ export default function FormNavigation({
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`flex items-center px-6 py-2 rounded-lg transition-colors ${
-            isSubmitting
-              ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-              : 'bg-green-600 text-white hover:bg-green-700'
-          }`}
+          className="sell-glass-button"
         >
           {isSubmitting ? 'Submitting...' : 'Submit Property'}
         </button>

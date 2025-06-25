@@ -42,6 +42,11 @@ export function useWallet() {
     // Only run on client-side
     if (typeof window !== 'undefined') {
       checkConnection();
+      if (window.ethereum) {
+        window.ethereum.on('accountsChanged', () => {
+          window.location.reload();
+        });
+      }
     }
   }, []);
 

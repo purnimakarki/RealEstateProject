@@ -13,6 +13,7 @@ import RealEstateTokenFactoryABI from '../../../contracts/RealEstateTokenFactory
 import PropertyTokenABI from '../../../contracts/PropertyTokenABI.json';
 import contractAddress from '../../../contracts/contract-address.json';
 import NotificationsList from '../../components/notifications/NotificationsList';
+import { getUserSubmittedProperties } from '../../components/utils/contractInteraction';
 
 interface ListedProperty {
   id: number;
@@ -33,9 +34,17 @@ interface PurchasedToken {
   tokenAddress: string;
   imageURL: string;
   tokenBalance: number;
+  listedTokenCount: number;
 }
 
-
+interface SubmittedProperty {
+  id: number;
+  propertyAddress: string;
+  value: string;
+  tokenAddress?: string;
+  propertyImageURLs: string[];
+  status: 'pending' | 'approved' | 'rejected';
+}
 
 export default function ProfilePage() {
   const { account } = useWallet();
@@ -48,6 +57,7 @@ export default function ProfilePage() {
   const [listingPrice, setListingPrice] = useState<{[key: number]: string}>({});
   const [isListing, setIsListing] = useState<{[key: number]: boolean}>({});
   const [showNotifications, setShowNotifications] = useState(false);
+  const [submittedProperties, setSubmittedProperties] = useState<SubmittedProperty[]>([]);
 
   const toggleNotifications = useCallback(() => {
     setShowNotifications(prev => !prev);
@@ -58,7 +68,9 @@ export default function ProfilePage() {
   };
 
   const handleListingPriceChange = (propertyId: number, value: string) => {
-    setListingPrice(prev => ({...prev, [propertyId]: value}));
+    // Remove any non-digit characters including decimals
+    const wholeNumber = value.replace(/[^\d]/g, '');
+    setListingPrice(prev => ({...prev, [propertyId]: wholeNumber}));
   };
 
   const fetchUserData = useCallback(async () => {
@@ -89,6 +101,9 @@ export default function ProfilePage() {
             listing.seller.toLowerCase() === account.toLowerCase()
           );
           
+          // Calculate total tokens listed (escrowed) by the user
+          const listedTokenCount = userListings.reduce((sum: number, l: any) => sum + Number(l.tokenAmount), 0);
+          
           // If user has listings for this property, add to listedProperties
           if (userListings.length > 0) {
             userListedProperties.push({
@@ -116,28 +131,27 @@ export default function ProfilePage() {
             const decimals = await tokenContract.decimals();
             const tokenBalance = parseFloat(ethers.formatUnits(balance, decimals));
 
-            // If user has tokens, add to purchasedTokens
-            if (tokenBalance > 0) { 
-              
-              const isAlreadyListed = userListedProperties.some(prop => prop.id === i);
-              
-              // Only add to purchasedTokens if it's not already in listedProperties
-              if (!isAlreadyListed) {
-                userPurchasedTokens.push({
-                  id: i,
-                  address: propertyAddresses[i],
-                  value: ethers.formatUnits(values[i], 18),
-                  tokenAddress: tokenAddresses[i],
-                  imageURL: propertyImageURLs[i]?.[0] || '/imageforLanding/house.jpg',
-                  tokenBalance
-                });
-              }
+            // Show property if user has tokens in wallet or listed for sale
+            if ((tokenBalance + listedTokenCount) > 0) {
+              userPurchasedTokens.push({
+                id: i,
+                address: propertyAddresses[i],
+                value: ethers.formatUnits(values[i], 18),
+                tokenAddress: tokenAddresses[i],
+                imageURL: propertyImageURLs[i]?.[0] || '/imageforLanding/house.jpg',
+                tokenBalance,
+                listedTokenCount
+              });
             }
           }
         }
 
         setListedProperties(userListedProperties);
         setPurchasedTokens(userPurchasedTokens);
+        
+        // Fetch user submitted properties
+        const userSubmittedProps = await getUserSubmittedProperties(account);
+        setSubmittedProperties(userSubmittedProps);
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -154,12 +168,22 @@ export default function ProfilePage() {
       alert('Please enter both amount and price');
       return;
     }
+
+    // Validate amount and price
+    if (!Number.isInteger(Number(amount))) {
+      alert('Token amount must be a whole number');
+      return;
+    }
+
+    if (!Number.isInteger(Number(price))) {
+      alert('Price must be a whole number');
+      return;
+    }
     
     const property = purchasedTokens.find(p => p.id === propertyId);
     if (!property) return;
     
     try {
-      // Set isListing for this specific property only
       setIsListing(prev => ({...prev, [propertyId]: true}));
       
       if (typeof window !== 'undefined' && window.ethereum) {
@@ -179,63 +203,43 @@ export default function ProfilePage() {
           signer
         );
         
-        // Convert amount and price to the correct format
+        // Convert amount and price to the correct format - use whole numbers only
         const tokenAmount = parseInt(amount);
-        const pricePerToken = ethers.parseUnits(price, 18);
+        const pricePerToken = ethers.parseUnits(price, 18); // Convert whole number to wei
         
-        // Calculate the exact amount with decimals - FIX: Use BigInt for calculation
         const decimals = await tokenContract.decimals();
         const tokenAmountWithDecimals = BigInt(tokenAmount) * BigInt(10 ** Number(decimals));
         
-        // Show user what's happening
         alert('Step 1 of 2: Please approve the token transfer in your wallet');
         
-        console.log(`Approving ${tokenAmountWithDecimals} tokens for transfer`);
-        
-        // Approve the factory to transfer tokens
         const approveTx = await tokenContract.approve(
           contractAddress.RealEstateTokenFactory,
           tokenAmountWithDecimals
         );
         
-        console.log('Approval transaction sent:', approveTx.hash);
-        console.log('Waiting for approval transaction to be mined...');
+        await approveTx.wait();
         
-        // Wait for the approval transaction to be mined
-        const approveReceipt = await approveTx.wait();
-        console.log('Approval confirmed in block:', approveReceipt.blockNumber);
-        
-        // Show user what's happening
         alert('Step 2 of 2: Please confirm the listing transaction in your wallet');
         
-        // Now create the listing
-        console.log(`Listing ${tokenAmount} tokens at ${price} ETH per token`);
         const listTx = await factoryContract.listForSale(
           propertyId,
           tokenAmount,
           pricePerToken
         );
         
-        console.log('Listing transaction sent:', listTx.hash);
-        console.log('Waiting for listing transaction to be mined...');
-        
         await listTx.wait();
-        console.log('Listing confirmed!');
         
-        // Reset form and refresh data
         setListingAmount(prev => ({...prev, [propertyId]: ''}));
         setListingPrice(prev => ({...prev, [propertyId]: ''}));
         
-        // Refresh the user data to show the new listing
         fetchUserData();
         
         alert('Tokens listed for sale successfully!');
       }
     } catch (error) {
       console.error('Error listing tokens for sale:', error);
-      alert('Error listing tokens for sale. See console for details.');
+      alert('Error listing tokens for sale. Please check your token balance.');
     } finally {
-      // Clear isListing for this specific property only
       setIsListing(prev => ({...prev, [propertyId]: false}));
     }
   };
@@ -325,6 +329,12 @@ export default function ProfilePage() {
                 Purchased Tokens
               </button>
               <button 
+                className={`px-6 py-3 font-medium ${activeTab === 'submitted' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400'}`}
+                onClick={() => setActiveTab('submitted')}
+              >
+                Submitted Properties
+              </button>
+              <button 
                 className={`px-6 py-3 font-medium ${activeTab === 'favorites' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400'}`}
                 onClick={() => setActiveTab('favorites')}
               >
@@ -357,7 +367,7 @@ export default function ProfilePage() {
                               className="object-cover"
                             />
                             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-                              <p className="text-white font-bold">${property.value}</p>
+                              <p className="text-white font-bold">${parseFloat(property.value).toFixed(0)}</p>
                             </div>
                           </div>
                           
@@ -416,7 +426,7 @@ export default function ProfilePage() {
                               className="object-cover"
                             />
                             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-                              <p className="text-white font-bold">${property.value}</p>
+                              <p className="text-white font-bold">${parseFloat(property.value).toFixed(0)}</p>
                             </div>
                           </div>
                           
@@ -428,6 +438,9 @@ export default function ProfilePage() {
                             <div className="mb-4">
                               <p className="text-gray-400 text-sm">Your balance:</p>
                               <p className="text-white font-medium">{property.tokenBalance} tokens</p>
+                              {property.listedTokenCount > 0 && (
+                                <p className="text-blue-400 text-sm">Listed for sale: {property.listedTokenCount} tokens</p>
+                              )}
                             </div>
                             
                             {/* Add listing form */}
@@ -442,11 +455,13 @@ export default function ProfilePage() {
                                   onChange={(e) => handleListingAmountChange(property.id, e.target.value)}
                                 />
                                 <input
-                                  type="number"
-                                  placeholder="Price per token"
+                                  type="text"
+                                  placeholder="Price per token (whole numbers only)"
                                   className="flex-1 max-w-[120px] px-1 py-2 bg-gray-800 rounded text-white text-sm"
                                   value={listingPrice[property.id] || ''}
                                   onChange={(e) => handleListingPriceChange(property.id, e.target.value)}
+                                  pattern="\d*"
+                                  inputMode="numeric"
                                 />
                               </div>
                              
@@ -484,6 +499,69 @@ export default function ProfilePage() {
                 </div>
               )}
               
+              {/* Submitted Properties Tab */}
+              {activeTab === 'submitted' && (
+                <div>
+                  {submittedProperties.length > 0 ? (
+                    <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                      {submittedProperties.map((property) => (
+                        <div key={property.id} className="bg-gray-800 rounded-xl overflow-hidden border border-gray-700">
+                          <div className="relative h-48">
+                            <Image 
+                              src={property.propertyImageURLs[0]?.startsWith('http') 
+                                ? property.propertyImageURLs[0] 
+                                : `https://gateway.pinata.cloud/ipfs/${property.propertyImageURLs[0]}`} 
+                              alt={property.propertyAddress} 
+                              fill 
+                              className="object-cover"
+                            />
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                              <p className="text-white font-bold">${property.value}</p>
+                            </div>
+                          </div>
+                          
+                          <div className="p-4">
+                            <h3 className="text-lg font-semibold text-white mb-2">
+                              {property.propertyAddress}
+                            </h3>
+                            
+                            <div className="flex items-center mb-4">
+                              <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                property.status === 'pending' ? 'bg-yellow-900/30 text-yellow-500' :
+                                property.status === 'approved' ? 'bg-green-900/30 text-green-500' :
+                                'bg-red-900/30 text-red-500'
+                              }`}>
+                                {property.status === 'pending' ? 'Pending ' :
+                                 property.status === 'approved' ? 'Approved' : 'Rejected'}
+                              </div>
+                            </div>
+                            
+                            {property.status === 'approved' && (
+                              <Link 
+                                href={`/page/property/${property.id}`}
+                                className="block w-full text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                              >
+                                View Property
+                              </Link>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <p className="text-gray-400 mb-4">You haven&apos;t submitted any properties yet</p>
+                      <Link 
+                        href="/page/sell" 
+                        className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        Submit a Property
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Favorites Tab */}
               {activeTab === 'favorites' && (
                 <FavoriteProperties />
@@ -492,7 +570,6 @@ export default function ProfilePage() {
           )}
         </div>
       </div>
-   
       <Footer />
     </div>
   );

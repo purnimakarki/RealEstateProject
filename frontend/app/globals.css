@@ -1,5 +1,24 @@
 @import "tailwindcss";
 
+:root {
+  --pastel-bg: #f0f4f8; /* Light, airy blue-gray */
+  --pastel-surface: #ffffff;
+  --pastel-primary: #a7c7e7; /* Soft blue */
+  --pastel-secondary: #f6e6b4; /* Pale yellow */
+  --pastel-accent: #b2d8b2; /* Mint green */
+  --pastel-text-primary: #333333;
+  --pastel-text-secondary: #5f6c7b;
+  --pastel-border: #dde4eb;
+
+  --font-sans: 'Inter', sans-serif; /* Example: Using Inter font */
+}
+
+body {
+  background-color: var(--pastel-bg);
+  color: var(--pastel-text-primary);
+  font-family: var(--font-sans);
+}
+
 .bg-black {
   background-color: #000000 !important;
 }
@@ -675,7 +694,7 @@ nav {
   animation: fadeIn 0.3s ease-out forwards;
 }
 
-/* Glass morphism utilities */
+/* Glassmorphism utilities */
 .backdrop-blur-sm {
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
@@ -712,43 +731,43 @@ input:focus, select:focus, button:focus {
   background: rgba(59, 130, 246, 0.7);
 }
 
-/* ==================== SELL PAGE DARK THEME ==================== */
+/* ==================== SELL PAGE MONOCHROMATIC THEME ==================== */
 .sell-page-container {
-  background-color: #121212;
-  color: #e0e0e0;
+  background-color: #DCD7C9;
+  color: #2C3333;
   min-height: 100vh;
 }
 
 .sell-page-header {
-  background: linear-gradient(to right, #1a1a1a, #2d2d2d);
+  background: #395B64;
   padding: 2.5rem 0;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #2C3333;
 }
 
 .sell-page-title {
-  color: #ffffff;
-  font-weight: 700;
+  color: #DCD7C9;
+  font-weight: 600;
   letter-spacing: 0.5px;
 }
 
 .sell-page-subtitle {
-  color: #b0b0b0;
+  color: #A5C9CA;
 }
 
 .sell-form-container {
-  background-color: #1e1e1e;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  border: 1px solid #333;
+  background-color: #DCD7C9;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(44, 51, 51, 0.1);
+  border: 1px solid #A5C9CA;
   transition: all 0.3s ease;
 }
 
 .sell-form-container:hover {
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 6px 16px rgba(44, 51, 51, 0.15);
 }
 
 .sell-form-section {
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #A5C9CA;
   padding-bottom: 2rem;
   margin-bottom: 2rem;
 }
@@ -760,7 +779,7 @@ input:focus, select:focus, button:focus {
 .sell-section-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #ffffff;
+  color: #395B64;
   margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
@@ -771,7 +790,7 @@ input:focus, select:focus, button:focus {
   display: inline-block;
   width: 4px;
   height: 20px;
-  background-color: #3b82f6;
+  background-color: #A5C9CA;
   margin-right: 0.75rem;
   border-radius: 2px;
 }
@@ -779,22 +798,22 @@ input:focus, select:focus, button:focus {
 .sell-input-field {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid #444;
-  border-radius: 8px;
+  border: 1px solid #A5C9CA;
+  border-radius: 6px;
   transition: all 0.2s;
-  background-color: #2a2a2a;
-  color: #e0e0e0;
+  background-color: #DCD7C9;
+  color: #2C3333;
 }
 
 .sell-input-field:focus {
   outline: none;
-  border-color: #3b82f6;
-  background-color: #333;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  border-color: #395B64;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(57, 91, 100, 0.1);
 }
 
 .sell-input-field::placeholder {
-  color: #777;
+  color: #A5C9CA;
 }
 
 .sell-checkbox-container {
@@ -806,24 +825,24 @@ input:focus, select:focus, button:focus {
 }
 
 .sell-checkbox-container:hover {
-  background-color: #2a2a2a;
+  background-color: rgba(165, 201, 202, 0.1);
 }
 
 .sell-checkbox-input {
   height: 1rem;
   width: 1rem;
-  accent-color: #3b82f6;
+  accent-color: #395B64;
   border-radius: 4px;
 }
 
 .sell-checkbox-label {
   margin-left: 0.5rem;
   font-size: 0.875rem;
-  color: #b0b0b0;
+  color: #2C3333;
 }
 
 .sell-image-upload-container {
-  border: 2px dashed #444;
+  border: 2px dashed #A5C9CA;
   border-radius: 8px;
   padding: 2rem;
   text-align: center;
@@ -831,8 +850,8 @@ input:focus, select:focus, button:focus {
 }
 
 .sell-image-upload-container:hover {
-  border-color: #3b82f6;
-  background-color: rgba(59, 130, 246, 0.1);
+  border-color: #395B64;
+  background-color: rgba(165, 201, 202, 0.05);
 }
 
 .sell-image-preview-grid {
@@ -844,15 +863,15 @@ input:focus, select:focus, button:focus {
 
 .sell-image-preview-item {
   position: relative;
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(44, 51, 51, 0.1);
   transition: transform 0.2s;
-  border: 1px solid #444;
+  border: 1px solid #A5C9CA;
 }
 
 .sell-image-preview-item:hover {
-  transform: scale(1.03);
+  transform: scale(1.02);
 }
 
 .sell-image-preview-img {
@@ -865,8 +884,8 @@ input:focus, select:focus, button:focus {
   position: absolute;
   top: 0.25rem;
   right: 0.25rem;
-  background-color: rgba(239, 68, 68, 0.9);
-  color: white;
+  background-color: #395B64;
+  color: #DCD7C9;
   border-radius: 50%;
   padding: 0.25rem;
   opacity: 0;
@@ -878,28 +897,28 @@ input:focus, select:focus, button:focus {
 }
 
 .sell-submit-button {
-  background-color: #3b82f6;
-  color: white;
+  background-color: #395B64;
+  color: #DCD7C9;
   font-weight: 500;
   padding: 0.75rem 2rem;
-  border-radius: 8px;
+  border-radius: 6px;
   transition: all 0.2s;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(44, 51, 51, 0.2);
 }
 
 .sell-submit-button:hover:not(:disabled) {
-  background-color: #2563eb;
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
+  background-color: #2C3333;
+  box-shadow: 0 4px 8px rgba(44, 51, 51, 0.3);
   transform: translateY(-1px);
 }
 
 .sell-submit-button:disabled {
-  background-color: #2d3748;
+  background-color: #A5C9CA;
   cursor: not-allowed;
 }
 
 .sell-status-alert {
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 1rem;
   display: flex;
   align-items: flex-start;
@@ -907,13 +926,13 @@ input:focus, select:focus, button:focus {
 }
 
 .sell-status-alert-success {
-  background-color: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background-color: rgba(165, 201, 202, 0.1);
+  border: 1px solid #A5C9CA;
 }
 
 .sell-status-alert-error {
-  background-color: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background-color: rgba(44, 51, 51, 0.1);
+  border: 1px solid #2C3333;
 }
 
 .sell-status-icon {
@@ -924,10 +943,477 @@ input:focus, select:focus, button:focus {
 
 .sell-status-title {
   font-weight: 500;
-  color: #ffffff;
+  color: #395B64;
 }
 
 .sell-status-message {
   margin-top: 0.25rem;
-  color: #b0b0b0;
+  color: #2C3333;
 }
+
+/* Minimalist Form Design */
+.sell-form-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.sell-form-section {
+  margin-bottom: 2.5rem;
+}
+
+.sell-input-group {
+  margin-bottom: 1.5rem;
+}
+
+.sell-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #395B64;
+  font-weight: 500;
+}
+
+.sell-input-field {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #A5C9CA;
+  border-radius: 4px;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.sell-input-field:focus {
+  border-color: #395B64;
+  box-shadow: 0 0 0 2px rgba(57, 91, 100, 0.1);
+}
+
+.sell-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #A5C9CA;
+  border-radius: 4px;
+  background-color: #ffffff;
+  color: #2C3333;
+  cursor: pointer;
+}
+
+.sell-select:focus {
+  border-color: #395B64;
+  box-shadow: 0 0 0 2px rgba(57, 91, 100, 0.1);
+}
+
+.sell-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 0.75rem;
+  border: 1px solid #A5C9CA;
+  border-radius: 4px;
+  background-color: #ffffff;
+  resize: vertical;
+}
+
+.sell-textarea:focus {
+  border-color: #395B64;
+  box-shadow: 0 0 0 2px rgba(57, 91, 100, 0.1);
+}
+
+/* Glassmorphism Styles */
+body.dark-mode-glass {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); /* Dark gradient background */
+  /* Or use a blurred cityscape image: */
+  /* background-image: url('/path/to/your/blurred-cityscape.jpg'); */
+  /* background-size: cover; */
+  /* background-position: center; */
+  /* background-attachment: fixed; */
+  color: #e0e0e0; /* Light gray text for dark mode */
+}
+
+.glass-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* For Safari */
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  padding: 2rem;
+}
+
+.glass-input,
+.glass-select,
+.glass-textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: #ffffff; /* White text for inputs */
+  transition: background 0.3s ease, border-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.glass-input::placeholder,
+.glass-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.glass-input:focus,
+.glass-select:focus,
+.glass-textarea:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* Blue glow on focus */
+}
+
+.glass-button {
+  background: rgba(59, 130, 246, 0.6); /* Semi-transparent blue */
+  color: #ffffff;
+  border: 1px solid rgba(59, 130, 246, 0.8);
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.glass-button:hover {
+  background: rgba(59, 130, 246, 0.8);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.glass-button:disabled {
+  background: rgba(107, 114, 128, 0.3); /* Semi-transparent gray for disabled */
+  border-color: rgba(107, 114, 128, 0.4);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+}
+
+.glass-button-secondary {
+  background: rgba(107, 114, 128, 0.3); /* Semi-transparent gray */
+  border-color: rgba(107, 114, 128, 0.4);
+}
+
+.glass-button-secondary:hover {
+  background: rgba(107, 114, 128, 0.5);
+}
+
+
+
+.glass-step-indicator.active {
+  box-shadow: 0 0 10px 2px rgba(59, 130, 246, 0.7); /* Blue glow */
+  background-color: rgba(59, 130, 246, 0.5);
+}
+
+.glass-step-indicator.completed {
+  background-color: rgba(59, 130, 246, 0.3);
+}
+
+.glass-label {
+  color: #e0e0e0; /* Light gray for labels */
+  margin-bottom: 0.5rem;
+  display: block;
+  font-weight: 500;
+}
+
+.glass-error-text {
+  color: #ff7f7f; /* Light red for errors, good contrast on dark glass */
+}
+
+.glass-image-uploader {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.glass-image-preview {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Ensure high contrast for text within glass elements */
+.glass-container h1,
+.glass-container h2,
+.glass-container h3,
+.glass-container p {
+  color: #ffffff; /* White or very light gray for headings and paragraphs */
+}
+
+.glass-container .text-gray-700, /* Example of overriding existing dark text */
+.glass-container .text-gray-800 {
+  color: #e0e0e0 !important; /* Light gray for better contrast */
+}
+
+/* Adjustments for checkbox/radio if needed for dark mode */
+.glass-checkbox {
+  accent-color: #3b82f6; 
+}
+
+/* Enhanced Glassmorphism Styles for Sell Page */
+.sell-page-background {
+  background: linear-gradient(125deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  background-size: 200% 200%;
+  animation: gradientBackground 15s ease infinite;
+  min-height: 100vh;
+  padding-top: 1px; /* Fix for margin collapse with child elements */
+}
+
+@keyframes gradientBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.sell-glass-container {
+  background: rgba(30, 41, 59, 0.6); /* Darker, more translucent background */
+  backdrop-filter: blur(12px); /* Increased blur */
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px; /* Softer radius */
+  border: 1px solid rgba(255, 255, 255, 0.15); /* Slightly more visible border */
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.3); /* Softer, more diffused shadow */
+  padding: 2rem; /* Default padding, can be overridden */
+}
+
+.sell-glass-progress-container {
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 25px 0 rgba(0, 0, 0, 0.25);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.sell-glass-section-title {
+  font-size: 1.5rem; /* Slightly larger */
+  font-weight: 600;
+  color: #e0e0e0; /* Brighter text */
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.sell-glass-label {
+  color: #cbd5e1; /* Lighter gray for labels */
+  margin-bottom: 0.5rem;
+  display: block;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.sell-glass-input,
+.sell-glass-select,
+.sell-glass-textarea {
+  background: rgba(42, 56, 77, 0.7); /* Darker input background */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px; /* Softer radius */
+  padding: 0.85rem 1rem; /* Adjusted padding */
+  color: #ffffff;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(0,0,0,0.1); /* Subtle inner shadow */
+  width: 100%;
+}
+
+.sell-glass-input::placeholder,
+.sell-glass-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.sell-glass-input:focus,
+.sell-glass-select:focus,
+.sell-glass-textarea:focus {
+  background: rgba(42, 56, 77, 0.9);
+  border-color: rgba(59, 130, 246, 0.7);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4), inset 0 1px 2px rgba(0,0,0,0.1); /* Enhanced focus glow */
+}
+
+.sell-glass-button {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(37, 99, 235, 0.6));
+  color: #ffffff;
+  border: 1px solid rgba(59, 130, 246, 0.7);
+  border-radius: 10px;
+  padding: 0.85rem 1.75rem; /* Adjusted padding */
+  font-weight: 600; /* Bolder text */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sell-glass-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(37, 99, 235, 0.8));
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+  transform: translateY(-2px);
+}
+
+.sell-glass-button:disabled {
+  background: rgba(107, 114, 128, 0.3);
+  border-color: rgba(107, 114, 128, 0.4);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.sell-glass-button-secondary {
+  background: rgba(107, 114, 128, 0.4);
+  border: 1px solid rgba(107, 114, 128, 0.5);
+  color: #e0e0e0;
+}
+
+.sell-glass-button-secondary:hover:not(:disabled) {
+  background: rgba(107, 114, 128, 0.6);
+  box-shadow: 0 6px 20px rgba(107, 114, 128, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Progress Bar Enhancements */
+.sell-glass-progress-bar {
+  height: 10px; /* Thicker bar */
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 1rem; /* Spacing from step indicators */
+}
+
+.sell-glass-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa); /* Softer gradient */
+  border-radius: 5px;
+  transition: width 0.5s ease-in-out;
+}
+
+.sell-glass-step-indicator {
+  width: 40px; /* Larger indicator */
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  color: #e0e0e0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.sell-glass-step-indicator.active {
+  background: rgba(59, 130, 246, 0.7);
+  border-color: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.5), 0 4px 10px rgba(0,0,0,0.3);
+  transform: scale(1.1);
+}
+
+.sell-glass-step-indicator.completed {
+  background: rgba(59, 130, 246, 0.4);
+  border-color: rgba(59, 130, 246, 0.6);
+  color: #c0d9ff;
+}
+
+.sell-glass-step-indicator.inactive {
+  /* Styles for future steps if needed, currently uses default */
+  opacity: 0.7;
+}
+
+/* Image Uploader Enhancements */
+.sell-glass-image-uploader {
+  background: rgba(42, 56, 77, 0.5);
+  border: 2px dashed rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+}
+
+.sell-glass-image-uploader:hover {
+  border-color: rgba(59, 130, 246, 0.7);
+  background: rgba(42, 56, 77, 0.7);
+}
+
+.sell-glass-image-preview {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+  position: relative; /* For absolute positioning of remove button and main image tag */
+}
+
+/* Error and Success Message Styling */
+.sell-glass-message-container {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  padding: 2rem;
+  text-align: center;
+}
+
+.sell-glass-message-container h2 {
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.sell-glass-message-container p {
+  color: #e0e0e0;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* General text color for better readability on dark glass */
+.sell-glass-container .text-gray-300,
+.sell-glass-container .text-gray-400 {
+  color: #a0aec0; /* Adjust as needed for light text on dark glass */
+}
+
+.sell-glass-container .text-white {
+  color: #ffffff !important;
+}
+
+.sell-glass-error-text {
+  color: #fca5a5; /* Light red for errors */
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+}
+
+.sell-glass-error-text svg {
+  margin-right: 0.25rem;
+}
+
+@keyframes blob1 {
+  0%, 100% { transform: scale(1) translate(0, 0); }
+  50% { transform: scale(1.1) translate(40px, 30px); }
+}
+@keyframes blob2 {
+  0%, 100% { transform: scale(1) translate(0, 0); }
+  50% { transform: scale(1.15) translate(-30px, -40px); }
+}
+.animate-blob1 {
+  animation: blob1 12s ease-in-out infinite;
+}
+.animate-blob2 {
+  animation: blob2 14s ease-in-out infinite;
+}
+
+@keyframes blob3 {
+  0%, 100% { transform: scale(1) translate(0, 0); }
+  50% { transform: scale(1.08) translate(-60px, 40px); }
+}
+.animate-blob3 {
+  animation: blob3 18s ease-in-out infinite;
+}
+
+
