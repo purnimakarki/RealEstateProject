@@ -6,8 +6,8 @@ import {
   getPendingProperties 
 } from '../components/utils/contractInteraction';
 
-export type Property = { // Added export here
-export type Property = { // Added export here
+
+export type Property = { 
   id: number;
   propertyAddress: string;
   value: string;

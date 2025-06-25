@@ -421,7 +421,7 @@ export const getPendingProperties = async () => {
     }
     
     // Format the pending properties
-    const formattedPendingProps = pendingProps[1].map((prop, index) => {
+    const formattedPendingProps = propertyStructs.map((prop, index) => {
       // Add null checks for each property
       if (!prop) return null;
       // Check if value exists before formatting
@@ -443,7 +443,7 @@ export const getPendingProperties = async () => {
         documentURLs: processedDocumentURLs,
         approved: prop.approved || false,
         exists: prop.exists || false,
-        contractIndex: pendingProps[0][index], // Use the correct index from the IDs array
+        contractIndex: propertyIds[index], // Use the correct index from the IDs array
         // Map all additional fields from the contract struct
         title: prop.title || '',
         description: prop.description || '',

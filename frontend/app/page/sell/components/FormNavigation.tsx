@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
@@ -9,6 +7,8 @@ interface FormNavigationProps {
   prevStep: () => void;
   nextStep: () => void;
   isSubmitting: boolean;
+  canProceed: boolean;
+  isFormValid: boolean;
 }
 
 export default function FormNavigation({ 
@@ -16,7 +16,9 @@ export default function FormNavigation({
   totalSteps, 
   prevStep, 
   nextStep, 
-  isSubmitting 
+  isSubmitting, 
+  canProceed, 
+  isFormValid 
 }: FormNavigationProps) {
   return (
     <div className="flex justify-between mt-8">
