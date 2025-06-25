@@ -380,7 +380,7 @@ export default function SellPage() {
         if (submitStatus === 'error') {
           setSubmitStatus('idle');
         }
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
   };
@@ -391,13 +391,44 @@ export default function SellPage() {
       if (submitStatus === 'error') {
         setSubmitStatus('idle');
       }
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black">
     <div className="sell-page-background">
       <Navbar />
+      
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/2 -left-32 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute bottom-20 right-1/3 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
+      </div>
+
+      <div className="relative pt-32 pb-20">
+        <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
+          {/* Header Section */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full mb-6 shadow-lg">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m8 7V3a2 2 0 012-2h4a2 2 0 012 2v4" />
+              </svg>
+            </div>
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent mb-4">
+              List Your Property
+            </h1>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+              Transform your property into a digital asset with our premium blockchain-powered platform
+            </p>
+          </div>
+
+          {/* Enhanced Progress Bar */}
+          <div className="mb-12">
+            <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
+          </div>
       <div className="pt-24 pb-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold text-white mb-6">List Your Property</h1>
@@ -407,6 +438,9 @@ export default function SellPage() {
           </div>
 
           {submitStatus === 'success' ? (
+            <div className="animate-fade-in">
+              <SuccessMessage resetForm={resetForm} />
+            </div>
             <div className="sell-glass-container">
               <SuccessMessage 
                 resetForm={resetForm} 
@@ -414,11 +448,44 @@ export default function SellPage() {
               />
             </div>
           ) : (
+            <div className="relative">
+              {/* Glassmorphism form container */}
+              <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8 md:p-12 shadow-2xl">
+                {/* Subtle inner glow */}
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-indigo-500/5 rounded-3xl"></div>
+                
+                <form onSubmit={handleSubmit} className="relative z-10">
+                  {submitStatus === 'error' && (
+                    <div className="mb-8 animate-slide-in">
+                      <ErrorMessage message="There was an error submitting your property. Please try again." />
+                    </div>
+                  )}
             <form onSubmit={handleSubmit} className="sell-glass-container">
               {submitStatus === 'error' && (
                 <ErrorMessage message="There was an error submitting your property. Please try again." />
               )}
 
+                  {/* Form Content with smooth transitions */}
+                  <div className="transition-all duration-500 ease-in-out">
+                    <PropertyForm
+                      currentStep={currentStep}
+                      formData={formData}
+                      setFormData={setFormData}
+                      errors={errors}
+                      touched={touched}
+                      handleInputChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+                        const { name, value } = e.target;
+                        setFormData((prev) => ({ ...prev, [name]: value }));
+                        validateField(name, value);
+                      }}
+                      handleBlur={(e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+                        const { name, value } = e.target;
+                        setTouched((prev) => ({ ...prev, [name]: true }));
+                        validateField(name, value);
+                      }}
+                      handleAmenityToggle={handleAmenityToggle}
+                      validateField={validateField}
+                    />
               <PropertyForm
                 currentStep={currentStep}
                 formData={formData}
@@ -440,6 +507,23 @@ export default function SellPage() {
                 validateField={validateField}
               />
 
+                    {currentStep === 4 && (
+                      <div className="animate-fade-in-up">
+                        <ImageUploader
+                          images={images}
+                          previewUrls={previewUrls}
+                          setImages={setImages}
+                          setPreviewUrls={setPreviewUrls}
+                          errors={errors}
+                          setErrors={setErrors}
+                          submitStatus={submitStatus}
+                          setSubmitStatus={setSubmitStatus}
+                          handleImageUpload={handleImageUpload}
+                          removeImage={removeImage}
+                        />
+                      </div>
+                    )}
+                  </div>
               {currentStep === 4 && (
                 <>
                   <ImageUploader
@@ -467,18 +551,47 @@ export default function SellPage() {
                 </>
               )}
 
-              <FormNavigation
-                currentStep={currentStep}
-                totalSteps={totalSteps}
-                prevStep={prevStep}
-                nextStep={nextStep}
-                isSubmitting={isSubmitting}
-              />
-            </form>
+                  {/* Enhanced Navigation */}
+                  <div className="mt-12 pt-8 border-t border-white/10">
+                    <FormNavigation
+                      currentStep={currentStep}
+                      totalSteps={totalSteps}
+                      prevStep={prevStep}
+                      nextStep={nextStep}
+                      isSubmitting={isSubmitting}
+                    />
+                  </div>
+                </form>
+              </div>
+
+              {/* Decorative elements */}
+              <div className="absolute -top-4 -left-4 w-24 h-24 bg-gradient-to-r from-purple-500/20 to-indigo-500/20 rounded-full blur-xl"></div>
+              <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-full blur-xl"></div>
+            </div>
           )}
+
+          {/* Trust indicators */}
+          <div className="mt-16 text-center">
+            <div className="flex flex-wrap justify-center items-center gap-8 text-gray-400 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span>Blockchain Secured</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-300"></div>
+                <span>IPFS Storage</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-700"></div>
+                <span>Smart Contract Verified</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+      
       <Footer />
+
     </div>
   );
 }
