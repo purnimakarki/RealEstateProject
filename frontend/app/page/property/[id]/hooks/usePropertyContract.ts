@@ -264,80 +264,88 @@ export const usePropertyContract = (propertyId: number) => {
     }
   };
   
+  // Helper to fetch live ETH price in USD
+  const fetchLiveEthPrice = async () => {
+    try {
+      const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+      const data = await response.json();
+      if (data && data.ethereum && data.ethereum.usd) {
+        return data.ethereum.usd;
+      }
+    } catch {
+      console.warn('Failed to fetch live ETH price, using fallback $2000');
+    }
+    return 2000;
+  };
+  
   // Create a listing to sell tokens
   const createListing = async () => {
     if (!account) {
       setError('Please connect your wallet first');
       return;
     }
-    
     if (listingAmount <= 0) {
       setError('Please enter a valid token amount');
       return;
     }
-    
     if (listingPrice <= 0) {
       setError('Please enter a valid price');
       return;
     }
-    
     if (listingAmount > userBalance) {
       setError('You don\'t have enough tokens');
       return;
     }
-    
     setIsProcessing(true);
     setError('');
     setSuccess('');
-    
     try {
       const provider = new ethers.BrowserProvider(window.ethereum as ethers.Eip1193Provider);
       const signer = await provider.getSigner();
-      
       const contract = new ethers.Contract(
         contractAddress.RealEstateTokenFactory,
         RealEstateTokenFactoryABI,
         signer
       );
-      
       const tokenContract = new ethers.Contract(
         property.tokenAddress,
         PropertyTokenABI,
         signer
       );
-      
       const decimals = await tokenContract.decimals();
-      
       const base = BigInt(10);
       const exponent = BigInt(decimals);
       const multiplier = base ** exponent;
       const tokenAmountWithDecimals = BigInt(listingAmount) * multiplier;
-      
       const approveTx = await tokenContract.approve(
         contractAddress.RealEstateTokenFactory,
         tokenAmountWithDecimals
       );
       await approveTx.wait();
-      
-      const ethPriceUSD = 2000; 
-      const priceInEth = listingPrice / ethPriceUSD;
-      const priceInWei = ethers.parseEther(priceInEth.toString());
-      
-      const tx = await contract.listForSale(propertyId, listingAmount, priceInWei);
+      // --- USD to Wei conversion for pricePerToken ---
+      const ethPriceUSD = await fetchLiveEthPrice();
+      const pricePerTokenETH = Number(listingPrice) / Number(ethPriceUSD);
+      const pricePerTokenWei = ethers.parseEther(pricePerTokenETH.toString());
+      // Debug logs
+      console.log('listingPrice (USD):', listingPrice);
+      console.log('ethPriceUSD:', ethPriceUSD);
+      console.log('pricePerTokenETH:', pricePerTokenETH);
+      console.log('pricePerTokenWei:', pricePerTokenWei.toString());
+      if (Number(pricePerTokenETH) > 1) {
+        setError('Listing price per token is more than 1 ETH. Please check your input.');
+        setIsProcessing(false);
+        return;
+      }
+      const tx = await contract.listForSale(propertyId, listingAmount, pricePerTokenWei);
       await tx.wait();
-      
       setSuccess('Listing created successfully!');
-      
       const propertyListings = await contract.getListings(propertyId);
-      
       const formattedListings = propertyListings.map((listing: any) => ({
         seller: listing.seller,
         tokenAmount: Number(listing.tokenAmount),
         pricePerToken: Number(ethers.formatUnits(listing.pricePerToken, 18))
       }));
-      
       setListings(formattedListings);
-      
     } catch (error: any) {
       console.error('Error creating listing:', error);
       setError(error.message || 'Failed to create listing. Please try again.');
@@ -348,7 +356,6 @@ export const usePropertyContract = (propertyId: number) => {
   
   // Buy tokens from a listing
   const buyFromListing = async (listingIndex: number) => {
-    // const { addNotification } = useNotification(); // Already declared at the top of the hook
     if (!account || !property || propertyId === undefined) return;
     
     setIsProcessing(true);
@@ -365,37 +372,37 @@ export const usePropertyContract = (propertyId: number) => {
         signer
       );
       
-      const listingsData = await contract.getListings(propertyId); // Renamed to avoid conflict
+      const listingsData = await contract.getListings(propertyId);
       if (listingIndex >= listingsData.length) {
         throw new Error("Invalid listing index");
       }
       
       const listing = listingsData[listingIndex];
-      const seller = listing.seller;
       const numTokensToBuy = listing.tokenAmount;
-      const pricePerTokenWei = listing.pricePerToken; // Already in wei
+      const pricePerTokenWei = listing.pricePerToken;
 
-      // Calculate total cost in wei
-      const totalCostWei = numTokensToBuy * pricePerTokenWei;
+      // Calculate total cost in wei using BigInt math to avoid overflow
+      const totalCostWei = BigInt(pricePerTokenWei) * BigInt(numTokensToBuy);
 
-      console.log(`Buying ${ethers.formatUnits(numTokensToBuy, 0)} tokens from listing #${listingIndex}`);
-      console.log(`Price per token (wei from contract): ${pricePerTokenWei.toString()}`);
-      console.log(`Total cost in wei (tx.value): ${totalCostWei.toString()}`);
-      console.log(`Seller: ${seller}`);
+      console.log(`Buying from listing #${listingIndex}:
+        Number of tokens: ${numTokensToBuy.toString()}
+        Price per token (Wei): ${pricePerTokenWei.toString()}
+        Total cost (Wei): ${totalCostWei.toString()}
+        Price per token (ETH): ${ethers.formatEther(pricePerTokenWei)} ETH
+        Total cost (ETH): ${ethers.formatEther(totalCostWei)} ETH`);
 
       const tx = await contract.buyFromListing(propertyId, listingIndex, {
-        value: totalCostWei // Use the correct ETH value in Wei
+        value: totalCostWei
       });
       
       const receipt = await tx.wait();
       
-      setSuccess(`Successfully purchased ${ethers.formatUnits(numTokensToBuy, 0)} tokens from listing #${listingIndex + 1}.`);
+      setSuccess(`Successfully purchased ${numTokensToBuy.toString()} tokens from listing #${listingIndex + 1}.`);
       
       const currentTimestamp = new Date().toISOString();
-     
-      const totalCostForNotification = ethers.formatEther(totalCostWei); 
+      const totalCostForNotification = ethers.formatEther(totalCostWei);
 
-      if (seller && seller.toLowerCase() !== account.toLowerCase()) { 
+      if (listing.seller && listing.seller.toLowerCase() !== account.toLowerCase()) { 
         const notificationForSeller = { 
           type: 'TOKEN_SOLD_IN_RESALE', 
           propertyId: propertyId,
@@ -405,24 +412,21 @@ export const usePropertyContract = (propertyId: number) => {
           timestamp: currentTimestamp,
           propertyName: property?.title || `Property #${propertyId + 1}`
         };
-        addNotification(notificationForSeller, seller);
-        console.log(`Notification sent to seller ${seller}:`, notificationForSeller);
+        addNotification(notificationForSeller, listing.seller);
       }
 
-      // --- Add Notification for Buyer ---
       const notificationForBuyer = {
         type: 'PURCHASE_CONFIRMATION_RESALE',
         propertyId: propertyId,
         tokenAmount: Number(numTokensToBuy),
         buyerAddress: account, 
-        sellerAddress: seller,
+        sellerAddress: listing.seller,
         totalCost: totalCostForNotification,
         timestamp: currentTimestamp,
         propertyName: property?.title || `Property #${propertyId + 1}`,
         transactionHash: receipt.hash
       };
       addNotification(notificationForBuyer, account);
-      console.log('Notification sent to buyer:', notificationForBuyer);
 
       fetchProperty(); 
     } catch (err: any) {

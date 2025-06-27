@@ -72,6 +72,9 @@ contract RealEstateTokenFactory {
     // Mapping: propertyId => active listings
     mapping(uint256 => Listing[]) private listings;
 
+    // Mapping: propertyId => price per token in Wei
+    mapping(uint256 => uint256) public tokenPriceInWei;
+
     constructor() {
         owner = msg.sender;
     }
@@ -183,7 +186,7 @@ contract RealEstateTokenFactory {
         require(propertyId < properties.length, "Invalid property ID");
 
         PropertyToken token = PropertyToken(properties[propertyId].tokenAddress);
-        uint256 cost = tokenAmount * 50 * (10 ** 18); // Assuming $50 per token in wei
+        uint256 cost = tokenAmount * tokenPriceInWei[propertyId];
         require(msg.value >= cost, "Insufficient ETH sent");
 
         // Transfer tokens from admin's sale pool to buyer
@@ -381,5 +384,11 @@ contract RealEstateTokenFactory {
         return (propertyIds, propertiesList);
     }
 
+    // Add a function to set the price per token in Wei for each property
+    function setTokenPriceInWei(uint256 propertyId, uint256 priceInWei) public {
+        require(msg.sender == owner, "Only owner can set price");
+        require(propertyId < properties.length, "Invalid property ID");
+        tokenPriceInWei[propertyId] = priceInWei;
+    }
 
 }

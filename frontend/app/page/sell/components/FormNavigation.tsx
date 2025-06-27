@@ -17,8 +17,7 @@ export default function FormNavigation({
   prevStep, 
   nextStep, 
   isSubmitting, 
-  canProceed, 
-  isFormValid 
+  
 }: FormNavigationProps) {
   return (
     <div className="flex justify-between mt-8">

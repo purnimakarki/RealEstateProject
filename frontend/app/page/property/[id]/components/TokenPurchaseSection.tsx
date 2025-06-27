@@ -193,8 +193,9 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
         signer
       );
       
-      // Calculate cost exactly as the contract expects
-      const tokenPriceWei = ethers.parseUnits("50", 18); // 50 ETH per token in wei
+      // Calculate price in ETH for one token
+      const tokenPriceInEth = tokenPrice / ethPrice; // e.g., $50 / $2000 = 0.025 ETH
+      const tokenPriceWei = ethers.parseUnits(tokenPriceInEth.toString(), 18);
       const totalCostWei = tokenPriceWei * BigInt(tokenAmount);
       
       console.log(`Buying ${tokenAmount} tokens for property #${propertyId}`);
@@ -255,6 +256,8 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
       setIsProcessing(false);
     }
   };
+  
+ 
   
   if (!property) return null;
   
