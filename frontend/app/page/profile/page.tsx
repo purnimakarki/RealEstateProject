@@ -205,7 +205,22 @@ export default function ProfilePage() {
         
         // Convert amount and price to the correct format - use whole numbers only
         const tokenAmount = parseInt(amount);
-        const pricePerToken = ethers.parseUnits(price, 18); // Convert whole number to wei
+        // --- USD to Wei conversion for pricePerToken ---
+        const fetchLiveEthPrice = async () => {
+          try {
+            const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+            const data = await response.json();
+            if (data && data.ethereum && data.ethereum.usd) {
+              return data.ethereum.usd;
+            }
+          } catch {
+            return 2000; // fallback
+          }
+          return 2000;
+        };
+        const ethPriceUSD = await fetchLiveEthPrice();
+        const pricePerTokenETH = Number(price) / ethPriceUSD;
+        const pricePerTokenWei = ethers.parseUnits(pricePerTokenETH.toString(), 18);
         
         const decimals = await tokenContract.decimals();
         const tokenAmountWithDecimals = BigInt(tokenAmount) * BigInt(10 ** Number(decimals));
@@ -224,7 +239,7 @@ export default function ProfilePage() {
         const listTx = await factoryContract.listForSale(
           propertyId,
           tokenAmount,
-          pricePerToken
+          pricePerTokenWei
         );
         
         await listTx.wait();
