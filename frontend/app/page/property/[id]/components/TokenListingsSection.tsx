@@ -97,19 +97,19 @@ const TokenListingsSection: React.FC<TokenListingsSectionProps> = ({
               <div key={index} className="border border-gray-800 rounded-lg p-4 bg-gray-900 hover:bg-gray-800 transition-all duration-300">
                 <div className="flex justify-between items-center mb-2">
                   <div>
-                    <p className="font-medium text-white">{listing.tokenAmount} Tokens</p>
+                    <p className="font-medium text-white">{Number(listing.tokenAmount ?? 0)} Tokens</p>
                     <p className="text-sm text-gray-400 mt-1">
                       <span className="font-semibold text-gray-300">Price per token:</span> 
-                      <span className="text-blue-400 font-mono ml-1">{listing.pricePerToken.toFixed(6)} ETH</span>
+                      <span className="text-blue-400 font-mono ml-1">{Number(listing.pricePerToken ?? 0).toFixed(6)} ETH</span>
                       <span className="mx-1 text-gray-500">/</span>
-                      <span className="text-green-400 font-mono">${listing.pricePerTokenUSD.toFixed(2)}</span>
+                      <span className="text-green-400 font-mono">${Number(listing.pricePerTokenUSD ?? 0).toFixed(2)}</span>
                     </p>
                   </div>
                   <div className="text-right">
                     <span className="block text-sm text-gray-400 font-semibold">Total:</span>
-                    <span className="font-bold text-blue-400 font-mono">{(listing.tokenAmount * listing.pricePerToken).toFixed(6)} ETH</span>
+                    <span className="font-bold text-blue-400 font-mono">{Number(listing.tokenAmount ?? 0 * listing.pricePerToken ?? 0).toFixed(6)} ETH</span>
                     <span className="mx-1 text-gray-500">/</span>
-                    <span className="font-bold text-green-400 font-mono">${listing.totalUSD.toFixed(2)}</span>
+                    <span className="font-bold text-green-400 font-mono">${Number(listing.totalUSD ?? 0).toFixed(2)}</span>
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
