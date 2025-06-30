@@ -1,4 +1,3 @@
-
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
@@ -136,18 +135,22 @@ export const usePropertyContract = (propertyId: number) => {
 
       const propertyListings = await contract.getListings(propertyId);
       const formattedListings = propertyListings.map((listing: any) => {
-        const pricePerTokenETH = Number(ethers.formatUnits(listing.pricePerToken, 18));
-        const pricePerTokenUSD = pricePerTokenETH * ethPriceUSD;
-        const totalUSD = pricePerTokenUSD * Number(listing.tokenAmount);
+        const pricePerTokenETH = Number(ethers.formatUnits(listing.pricePerToken ?? 0, 18)) || 0;
+        const pricePerTokenUSD = pricePerTokenETH * ethPriceUSD || 0;
+        const tokenAmount = Number(listing.tokenAmount ?? 0) || 0;
+        const totalUSD = pricePerTokenUSD * tokenAmount || 0;
         return {
-          seller: listing.seller,
-          tokenAmount: Number(listing.tokenAmount),
+          seller: listing.seller ?? '',
+          tokenAmount,
           pricePerToken: pricePerTokenETH,
           pricePerTokenUSD,
           totalUSD
         };
       });
-      setListings(formattedListings);
+      const filteredListings = formattedListings.filter(
+        (l: any) => !isNaN(l.pricePerToken) && !isNaN(l.pricePerTokenUSD) && !isNaN(l.tokenAmount) && !isNaN(l.totalUSD)
+      );
+      setListings(filteredListings);
 
       const accounts = await provider.listAccounts();
       if (accounts.length > 0 && accounts[0]) {
