@@ -98,21 +98,25 @@ const TokenListingsSection: React.FC<TokenListingsSectionProps> = ({
                 <div className="flex justify-between items-center mb-2">
                   <div>
                     <p className="font-medium text-white">{listing.tokenAmount} Tokens</p>
-                    <p className="text-sm text-gray-400">
-                      ${listing.pricePerToken.toFixed(2)} per token
+                    <p className="text-sm text-gray-400 mt-1">
+                      <span className="font-semibold text-gray-300">Price per token:</span> 
+                      <span className="text-blue-400 font-mono ml-1">{listing.pricePerToken.toFixed(6)} ETH</span>
+                      <span className="mx-1 text-gray-500">/</span>
+                      <span className="text-green-400 font-mono">${listing.pricePerTokenUSD.toFixed(2)}</span>
                     </p>
                   </div>
-                  <p className="font-semibold text-blue-400">
-                    ${(listing.tokenAmount * listing.pricePerToken).toFixed(2)} total
-                  </p>
+                  <div className="text-right">
+                    <span className="block text-sm text-gray-400 font-semibold">Total:</span>
+                    <span className="font-bold text-blue-400 font-mono">{(listing.tokenAmount * listing.pricePerToken).toFixed(6)} ETH</span>
+                    <span className="mx-1 text-gray-500">/</span>
+                    <span className="font-bold text-green-400 font-mono">${listing.totalUSD.toFixed(2)}</span>
+                  </div>
                 </div>
-                
                 <div className="flex justify-between items-center">
                   <p className="text-sm text-gray-400 truncate max-w-[200px]">
                     Seller: {listing.seller === account ? 'You' : listing.seller}
                   </p>
-                  
-                                {listing.seller === account ? (
+                  {listing.seller === account ? (
                     <button
                       onClick={() => cancelListing(index)}
                       disabled={isProcessing}

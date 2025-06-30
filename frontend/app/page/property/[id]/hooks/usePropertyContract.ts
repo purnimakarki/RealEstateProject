@@ -61,6 +61,16 @@ export const usePropertyContract = (propertyId: number) => {
         provider
       );
 
+      // Fetch live ETH price for USD conversion
+      let ethPriceUSD = 2000;
+      try {
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+        const data = await response.json();
+        if (data && data.ethereum && data.ethereum.usd) {
+          ethPriceUSD = data.ethereum.usd;
+        }
+      } catch {}
+
       // Correctly destructure the arrays returned by getProperties
       const [
         propertyAddresses,
@@ -124,11 +134,18 @@ export const usePropertyContract = (propertyId: number) => {
       setProperty(formattedProperty);
 
       const propertyListings = await contract.getListings(propertyId);
-      const formattedListings = propertyListings.map((listing: any) => ({
-        seller: listing.seller,
-        tokenAmount: Number(listing.tokenAmount),
-        pricePerToken: Number(ethers.formatUnits(listing.pricePerToken, 18)),
-      }));
+      const formattedListings = propertyListings.map((listing: any) => {
+        const pricePerTokenETH = Number(ethers.formatUnits(listing.pricePerToken, 18));
+        const pricePerTokenUSD = pricePerTokenETH * ethPriceUSD;
+        const totalUSD = pricePerTokenUSD * Number(listing.tokenAmount);
+        return {
+          seller: listing.seller,
+          tokenAmount: Number(listing.tokenAmount),
+          pricePerToken: pricePerTokenETH,
+          pricePerTokenUSD,
+          totalUSD
+        };
+      });
       setListings(formattedListings);
 
       const accounts = await provider.listAccounts();
@@ -324,14 +341,19 @@ export const usePropertyContract = (propertyId: number) => {
       await approveTx.wait();
       // --- USD to Wei conversion for pricePerToken ---
       const ethPriceUSD = await fetchLiveEthPrice();
+      // Calculate price per token in ETH as a number
       const pricePerTokenETH = Number(listingPrice) / Number(ethPriceUSD);
-      const pricePerTokenWei = ethers.parseEther(pricePerTokenETH.toString());
+      // Convert to string with up to 18 decimals for parseUnits
+      const pricePerTokenETHString = pricePerTokenETH.toLocaleString('fullwide', {useGrouping:false, maximumSignificantDigits:21});
+      // Use parseUnits for precision
+      const pricePerTokenWei = ethers.parseUnits(pricePerTokenETHString, 18);
       // Debug logs
-      console.log('listingPrice (USD):', listingPrice);
-      console.log('ethPriceUSD:', ethPriceUSD);
-      console.log('pricePerTokenETH:', pricePerTokenETH);
-      console.log('pricePerTokenWei:', pricePerTokenWei.toString());
-      if (Number(pricePerTokenETH) > 1) {
+      console.log('Listing price input (USD):', listingPrice);
+      console.log('ETH price (USD):', ethPriceUSD);
+      console.log('Price per token (ETH):', pricePerTokenETH);
+      console.log('Price per token (ETH, string):', pricePerTokenETHString);
+      console.log('Price per token (Wei):', pricePerTokenWei.toString());
+      if (pricePerTokenETH > 1) {
         setError('Listing price per token is more than 1 ETH. Please check your input.');
         setIsProcessing(false);
         return;
@@ -383,6 +405,14 @@ export const usePropertyContract = (propertyId: number) => {
 
       // Calculate total cost in wei using BigInt math to avoid overflow
       const totalCostWei = BigInt(pricePerTokenWei) * BigInt(numTokensToBuy);
+
+      // Check if user has enough ETH to cover the purchase
+      const userBalanceWei = await provider.getBalance(account);
+      if (userBalanceWei < totalCostWei) {
+        setError(`You do not have enough ETH to complete this purchase. Required: ${ethers.formatEther(totalCostWei)} ETH, Available: ${ethers.formatEther(userBalanceWei)} ETH.`);
+        setIsProcessing(false);
+        return;
+      }
 
       console.log(`Buying from listing #${listingIndex}:
         Number of tokens: ${numTokensToBuy.toString()}
