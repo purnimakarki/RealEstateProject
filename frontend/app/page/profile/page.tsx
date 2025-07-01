@@ -58,6 +58,7 @@ export default function ProfilePage() {
   const [isListing, setIsListing] = useState<{[key: number]: boolean}>({});
   const [showNotifications, setShowNotifications] = useState(false);
   const [submittedProperties, setSubmittedProperties] = useState<SubmittedProperty[]>([]);
+  const [ethPriceUSD, setEthPriceUSD] = useState<number>(2000);
 
   const toggleNotifications = useCallback(() => {
     setShowNotifications(prev => !prev);
@@ -68,9 +69,7 @@ export default function ProfilePage() {
   };
 
   const handleListingPriceChange = (propertyId: number, value: string) => {
-    // Remove any non-digit characters including decimals
-    const wholeNumber = value.replace(/[^\d]/g, '');
-    setListingPrice(prev => ({...prev, [propertyId]: wholeNumber}));
+    setListingPrice(prev => ({...prev, [propertyId]: value}));
   };
 
   const fetchUserData = useCallback(async () => {
@@ -214,11 +213,16 @@ export default function ProfilePage() {
               return data.ethereum.usd;
             }
           } catch {
-            return 2000; // fallback
+            return null; // fail
           }
-          return 2000;
+          return null;
         };
         const ethPriceUSD = await fetchLiveEthPrice();
+        if (!ethPriceUSD || isNaN(ethPriceUSD) || ethPriceUSD <= 0) {
+          alert('Failed to fetch live ETH price. Please try again.');
+          setIsListing(prev => ({...prev, [propertyId]: false}));
+          return;
+        }
         const pricePerTokenETH = Number(price) / ethPriceUSD;
         const pricePerTokenWei = ethers.parseUnits(pricePerTokenETH.toString(), 18);
         
@@ -258,6 +262,23 @@ export default function ProfilePage() {
       setIsListing(prev => ({...prev, [propertyId]: false}));
     }
   };
+
+  // Fetch live ETH price for USD conversion
+  useEffect(() => {
+    const fetchEthPrice = async () => {
+      try {
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+        const data = await response.json();
+        if (data && data.ethereum && data.ethereum.usd) {
+          setEthPriceUSD(data.ethereum.usd);
+        }
+      } catch {
+        setEthPriceUSD(2000); // fallback
+      }
+    };
+    fetchEthPrice();
+  }, []);
+
   useEffect(() => {
     fetchUserData();
   }, [fetchUserData]);
@@ -393,11 +414,23 @@ export default function ProfilePage() {
                             
                             <div className="mb-4">
                               <p className="text-gray-400 text-sm">Your listings:</p>
-                              {property.listings.map((listing, idx) => (
-                                <div key={idx} className="bg-gray-700 p-2 rounded mt-2">
-                                  <p className="text-sm">{listing.tokenAmount} tokens @ ${listing.pricePerToken}/token</p>
-                                </div>
-                              ))}
+                              {property.listings.map((listing, idx) => {
+                                const pricePerTokenETH = Number(listing.pricePerToken) || 0;
+                                const pricePerTokenUSD = (pricePerTokenETH * ethPriceUSD).toFixed(2);
+                                return (
+                                  <div key={idx} className="bg-gray-700 p-2 rounded mt-2">
+                                    <p className="text-sm">
+                                      {listing.tokenAmount} tokens @ {pricePerTokenETH.toFixed(6)} ETH / ${pricePerTokenUSD} per token
+                                    </p>
+                                    <p className="text-xs text-gray-400 mt-1">
+                                      Conversion rate at listing: 1 ETH = ${ethPriceUSD}
+                                    </p>
+                                    <p className="text-xs text-yellow-400 mt-1">
+                                      Note: ETH price is live and may fluctuate at the time of listing.
+                                    </p>
+                                  </div>
+                                );
+                              })}
                             </div>
                             
                             <Link 
