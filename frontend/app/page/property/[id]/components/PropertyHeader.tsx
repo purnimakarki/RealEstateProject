@@ -1,5 +1,4 @@
 import React from 'react';
-import { Heart } from 'lucide-react';
 
 interface PropertyHeaderProps {
   property: any;
@@ -9,7 +8,6 @@ interface PropertyHeaderProps {
 
 const PropertyHeader: React.FC<PropertyHeaderProps> = ({ 
   property, 
-  isFavorite, 
   toggleFavorite 
 }) => {
   if (!property) return null;
