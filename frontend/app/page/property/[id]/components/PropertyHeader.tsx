@@ -22,11 +22,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
           onClick={toggleFavorite}
           className="p-2 rounded-full hover:bg-gray-800 transition-all duration-300"
         >
-          <Heart 
-            size={24} 
-            fill={isFavorite ? "#FF6B6B" : "none"} 
-            color={isFavorite ? "#FF6B6B" : "white"} 
-          />
+          
         </button>
       </div>
       <p className="text-gray-400 mt-2">{property.address}, {property.city}, {property.state}</p>
