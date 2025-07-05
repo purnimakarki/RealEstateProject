@@ -26,4 +26,6 @@ export interface PropertyResponse {
   bedrooms: number;
   bathrooms: number;
   area: number;
+  city: string;
+  apartmentType: string;
 }

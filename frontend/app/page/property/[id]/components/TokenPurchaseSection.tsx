@@ -6,6 +6,7 @@ import RealEstateTokenFactoryABI from '../../../../../contracts/RealEstateTokenF
 import contractAddress from '../../../../../contracts/contract-address.json';
 import PropertyTokenABI from '../../../../../contracts/PropertyTokenABI.json';
 import { useNotification } from '@/app/context/NotificationContext'; // Import useNotification
+import { useToast } from '@/app/components/ui/toast';
 
 interface TokenPurchaseSectionProps {
   property: any;
@@ -21,6 +22,7 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
   connectWallet
 }) => {
   const { addNotification } = useNotification(); 
+  const { showToast } = useToast();
   const [tokenAmount, setTokenAmount] = useState<number>(1);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
@@ -249,9 +251,33 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
       
       setTokenAmount(1);
       fetchUserBalance();
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error buying tokens:", err);
-      setError(err instanceof Error ? err.message : "Failed to buy tokens. Please try again.");
+      let userMessage = "Failed to buy tokens. Please try again.";
+      // MetaMask user rejected
+      if (err.code === 4001 || err.code === "ACTION_REJECTED") {
+        userMessage = "Transaction was rejected by the user.";
+      }
+      // Insufficient funds
+      else if (
+        err.message?.toLowerCase().includes("insufficient funds") ||
+        err.reason?.toLowerCase().includes("insufficient funds")
+      ) {
+        userMessage = "You do not have enough funds to complete this transaction.";
+      }
+      // Network mismatch
+      else if (
+        err.message?.toLowerCase().includes("chain") &&
+        err.message?.toLowerCase().includes("mismatch")
+      ) {
+        userMessage = "Please switch your wallet to the correct network.";
+      }
+      // Contract revert
+      else if (err.reason || err.data?.message) {
+        userMessage = err.reason || err.data?.message || userMessage;
+      }
+      setError(userMessage);
+      showToast(userMessage, 'error');
     } finally {
       setIsProcessing(false);
     }
@@ -411,7 +437,7 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
                   </div>
                 </div>
                 <a
-                  href={`https://etherscan.io/tx/${transactionHash}`}
+                  href={`https://sepolia.etherscan.io/tx/${transactionHash}`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-blue-600 hover:text-blue-400 block mt-2"

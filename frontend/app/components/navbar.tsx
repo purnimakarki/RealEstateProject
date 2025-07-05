@@ -56,6 +56,8 @@ export default function Navbar() {
           </button>
         )}
 
+      
+
         <div className="hidden md:flex space-x-8">
           
           {account ? (
@@ -81,7 +83,13 @@ export default function Navbar() {
               Profile
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-blue-300 transition-all duration-300 group-hover:w-full"></span>
             </Link>
+
           )}
+            {/* How It Works link - always visible */}
+        <Link href="/how-it-works" className={`${scrolled ? 'text-gray-800' : 'text-white'} hover:text-blue-500 transition-colors relative group`}>
+          How It Works
+          <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-blue-300 transition-all duration-300 group-hover:w-full"></span>
+        </Link>
         </div>
       </div>
       
@@ -155,14 +163,14 @@ export default function Navbar() {
               Buy
             </Link>
             
-            {/* Add the missing Rent link
+            {/* How It Works link for mobile */}
             <Link 
-              href="/rent" 
+              href="/how-it-works"
               className="text-gray-700 hover:text-blue-600 transition-colors flex items-center gap-2 text-lg border-b border-gray-100 pb-3"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Rent
-            </Link> */}
+              How It Works
+            </Link>
           
             <Link 
               href="/page/sell" 

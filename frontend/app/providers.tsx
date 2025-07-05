@@ -1,13 +1,15 @@
-// app/providers.tsx
 'use client';
 import { PropertyProvider } from './context/PropertyContext';
-import { NotificationProvider } from './context/NotificationContext'; // Import NotificationProvider
+import { NotificationProvider } from './context/NotificationContext'; 
+import { ToastProvider } from './components/ui/toast';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <PropertyProvider>
-      <NotificationProvider> {/* Wrap with NotificationProvider */}
-        {children}
+      <NotificationProvider>
+        <ToastProvider>
+          {children}
+        </ToastProvider>
       </NotificationProvider>
     </PropertyProvider>
   );

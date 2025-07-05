@@ -608,7 +608,6 @@ const Footer = () => {
                 { name: 'Home', href: '/' },
                 { name: 'Buy', href: '/page/buy' },
                 { name: 'Sell', href: '/page/sell' },
-                { name: 'Blockchain Solutions' }
               ].map((link, index) => (
                 <li key={index} className="group">
                   <a 

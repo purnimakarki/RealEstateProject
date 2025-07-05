@@ -160,18 +160,15 @@ export default function FeaturedProperties() {
 
   return (
     <div className="py-24 bg-gradient-to-b from-blue-50 to-white relative overflow-hidden">
-      {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-blue-100 rounded-full filter blur-3xl opacity-30 -mt-24 -mr-24"></div>
-      <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-blue-100 rounded-full filter blur-3xl opacity-30 -mb-24 -ml-24"></div>
+    
+     
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center">
           <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">Exclusive Selection</span>
           <h2 className="mt-3 text-4xl font-bold text-gray-900">Featured Properties</h2>
           <div className="w-24 h-1 bg-blue-500 mx-auto my-6"></div>
-          <p className="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">
-            Explore our handpicked selection of premium properties, each verified and secured with blockchain technology
-          </p>
+        
         </div>
         
         <div className="mt-16 grid gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">

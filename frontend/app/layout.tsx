@@ -1,11 +1,12 @@
+'use client';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { Providers } from './providers'; // Make sure this is imported and used
-
+import { Providers } from './providers';
 const inter = Inter({ subsets: ['latin'] });
 
 import { FavoritesProvider } from './components/hooks/useFavorites';
 import { PropertyProvider } from './context/PropertyContext';
+import Navbar from './components/navbar';
 
 export default function RootLayout({
   children,
@@ -15,9 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers> {/* Add this wrapper */}
+        <Navbar />
+        <Providers>
           <PropertyProvider>
-            <FavoritesProvider> {/* Make sure FavoritesProvider is used */}
+            <FavoritesProvider> 
               {children}
             </FavoritesProvider>
           </PropertyProvider>

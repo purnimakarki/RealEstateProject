@@ -40,7 +40,7 @@ const HowToUsePlatform: React.FC = () => {
       title: "Register Your Account",
       description: "Click 'Sign Up', fill in your details (email, password). Check your email for a verification link to activate your account. This keeps your profile secure.",
       visual: "👤",
-      position: { x: 20, y: 25 },
+      position: { x: 20, y: 35 },
     },
     {
       id: 2,
@@ -48,7 +48,7 @@ const HowToUsePlatform: React.FC = () => {
       title: "Explore Property Listings",
       description: "Once logged in, navigate to 'Properties'. Use filters like location, price range, and property type to narrow down your search. Click on any listing for more details.",
       visual: "🏠",
-      position: { x: 80, y: 25 },
+      position: { x: 80, y: 35 },
     },
     {
       id: 3,
@@ -56,7 +56,7 @@ const HowToUsePlatform: React.FC = () => {
       title: "Connect Your Crypto Wallet",
       description: "For transactions, you'll need a compatible crypto wallet (e.g., MetaMask). Go to your profile settings and find the 'Connect Wallet' option. Follow the prompts to link it securely.",
       visual: "💳",
-      position: { x: 80, y: 75 },
+      position: { x: 80, y: 85 },
     },
     {
       id: 4,
@@ -64,7 +64,7 @@ const HowToUsePlatform: React.FC = () => {
       title: "Transact with Confidence",
       description: "When ready to buy or invest, click 'Purchase' on a property. Your connected wallet will prompt you to confirm the transaction. All transactions are transparently recorded on the blockchain.",
       visual: "🔒",
-      position: { x: 20, y: 75 },
+      position: { x: 20, y: 85 },
     }
   ];
 
@@ -207,7 +207,7 @@ const HowToUsePlatform: React.FC = () => {
                   {/* Add subtle animated gradient background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-cyan-500/5 animate-gradient-shift"></div>
                   
-                  <svg viewBox="0 0 100 100" className="w-full h-96 transform hover:scale-105 transition-transform duration-500">
+                  <svg viewBox="0 0 100 110" className="w-full h-96 transform hover:scale-105 transition-transform duration-500">
                     {connections.map((conn, index) => (
                       <g key={`conn-${index}`}>
                         <path
