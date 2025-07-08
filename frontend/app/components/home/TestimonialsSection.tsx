@@ -23,7 +23,7 @@ export default function TestimonialsSection() {
       quote: "Working with this team made finding my dream home so easy. Their expertise and dedication are unmatched!",
       image: "/person3.jpg",
       rating: 5,
-      detail: "Bought a home in 2023"
+      detail: "Bought a home in 2025"
     },
     {
       name: "Michael Brown",
@@ -39,7 +39,7 @@ export default function TestimonialsSection() {
       quote: "I never thought buying property could be this simple and transparent. The blockchain process gave me total confidence.",
       image: "/person4.jpg",
       rating: 5,
-      detail: "Bought her first home in 2023"
+      detail: "Bought her first home in 2024"
     },
     {
       name: "Alexei Ivanov",
@@ -63,7 +63,7 @@ export default function TestimonialsSection() {
       quote: "This platform is the future of real estate. The analytics and transparency are unlike anything I've seen before.",
       image: "/person6.jpg",
       rating: 5,
-      detail: "Early adopter, invested in 2022"
+      detail: "Early adopter, invested in 2025  "
     }
   ];
 
