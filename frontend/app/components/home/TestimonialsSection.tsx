@@ -29,7 +29,7 @@ export default function TestimonialsSection() {
       name: "Michael Brown",
       role: "Property Investor",
       quote: "As a long-time investor, I've worked with many agents, but this team consistently delivers outstanding results.",
-      image: "/person2.jpg",
+      image: "/person1.jpg",
       rating: 5,
       detail: "Invested in 5 properties"
     },
@@ -45,7 +45,7 @@ export default function TestimonialsSection() {
       name: "Alexei Ivanov",
       role: "International Investor",
       quote: "Investing from abroad was seamless. I love being able to track my assets on-chain and receive instant updates.",
-      image: "/person1.jpg",
+      image: "/person2.jpg",
       rating: 5,
       detail: "Invested from Russia"
     },
