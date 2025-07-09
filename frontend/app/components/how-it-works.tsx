@@ -9,6 +9,7 @@ export default function HowItWorksRedesign() {
   const [isVisible, setIsVisible] = useState(false);
   const { account, connectWallet, isConnecting } = useWallet();
   const router = useRouter();
+  const [particles, setParticles] = useState<Array<{left:number,top:number,animationDelay:number,animationDuration:number}>>([]);
 
   useEffect(() => {
     setIsVisible(true);
@@ -19,6 +20,17 @@ export default function HowItWorksRedesign() {
     return () => {
       clearInterval(interval);
     };
+  }, []);
+
+  useEffect(() => {
+    setParticles(
+      Array.from({ length: 20 }, () => ({
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        animationDelay: Math.random() * 3,
+        animationDuration: 2 + Math.random() * 3,
+      }))
+    );
   }, []);
 
   const steps = [
@@ -124,15 +136,15 @@ export default function HowItWorksRedesign() {
 
       {/* Floating Particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
+        {particles.map((particle, i) => (
           <div
             key={i}
             className="absolute w-2 h-2 bg-white/20 rounded-full animate-pulse"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 3}s`
+              left: `${particle.left}%`,
+              top: `${particle.top}%`,
+              animationDelay: `${particle.animationDelay}s`,
+              animationDuration: `${particle.animationDuration}s`
             }}
           />
         ))}

@@ -1,12 +1,6 @@
-/**
- * Utility functions for handling image URLs in the application
- */
 
 /**
- * Formats an image URL to ensure it's properly displayed
- * - Handles IPFS hashes by prepending the gateway URL
- * - Passes through regular URLs unchanged
- * 
+ 
  * @param url The raw image URL or IPFS hash
  * @returns Properly formatted URL for display
  */
@@ -21,7 +15,7 @@ export const formatImageUrl = (url: string): string => {
     // Remove any 'ipfs://' prefix if present
     const hash = url.replace('ipfs://', '');
     // Return the URL with the IPFS gateway
-    return `https://gateway.pinata.cloud/ipfs/${hash}`;
+    return `https://ipfs.io/ipfs/${hash}`;
   }
   
   // Return the URL as is for any other case

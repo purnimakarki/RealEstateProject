@@ -232,87 +232,90 @@ export default function BuyPage() {
             <>
               <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {paginatedProperties.length > 0 ? (
-                  paginatedProperties.map((property, index) => (
-                    <div
-                      key={index + (currentPage - 1) * ITEMS_PER_PAGE}
-                      className="glass-container bg-gradient-to-br from-blue-900/80 to-blue-700/80 rounded-2xl shadow-2xl border border-blue-300 relative overflow-hidden flex flex-col justify-between transition duration-300 hover:shadow-2xl hover:scale-[1.02]"
-                    >
-                      <div className="relative h-64 rounded-xl overflow-hidden mb-2">
-                        {property.propertyImageURLs?.length > 0 ? (
-                          <Image
-                            src={property.propertyImageURLs[0].startsWith('http') 
-                              ? property.propertyImageURLs[0] 
-                              : `https://gateway.pinata.cloud/ipfs/${property.propertyImageURLs[0]}`}
-                            alt={property.propertyAddress || 'Property Image'}
-                            fill
-                            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-700">
-                            <Home className="h-12 w-12 opacity-50" />
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                        <span className="absolute top-4 left-4 bg-white/80 text-blue-700 font-bold px-3 py-1 rounded-full shadow">${Number(ethers.formatUnits(property.value, 18)).toLocaleString()}</span>
-                      </div>
+                  paginatedProperties.map((property, index) => {
+                    const globalIndex = index + (currentPage - 1) * ITEMS_PER_PAGE;
+                    return (
+                      <div
+                        key={globalIndex}
+                        className="glass-container bg-gradient-to-br from-blue-900/80 to-blue-700/80 rounded-2xl shadow-2xl border border-blue-300 relative overflow-hidden flex flex-col justify-between transition duration-300 hover:shadow-2xl hover:scale-[1.02]"
+                      >
+                        <div className="relative h-64 rounded-xl overflow-hidden mb-2">
+                          {property.propertyImageURLs?.length > 0 ? (
+                            <Image
+                              src={property.propertyImageURLs[0].startsWith('http') 
+                                ? property.propertyImageURLs[0] 
+                                : `https://gateway.pinata.cloud/ipfs/${property.propertyImageURLs[0]}`}
+                              alt={property.propertyAddress || 'Property Image'}
+                              fill
+                              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-700">
+                              <Home className="h-12 w-12 opacity-50" />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                          <span className="absolute top-4 left-4 bg-white/80 text-blue-700 font-bold px-3 py-1 rounded-full shadow">${Number(ethers.formatUnits(property.value, 18)).toLocaleString()}</span>
+                        </div>
 
-                      <div className="p-6 flex flex-col flex-1">
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors line-clamp-1">
-                              {property.propertyAddress || 'Unknown Address'}
-                            </h3>
-                            <div className="flex items-center mt-1 text-gray-300 text-sm">
-                              <Tag className="h-4 w-4 mr-1" />
-                              <span>
-                                Token: {property.tokenAddress
-                                  ? `${property.tokenAddress.slice(0, 6)}...${property.tokenAddress.slice(-4)}`
-                                  : 'N/A'}
-                              </span>
+                        <div className="p-6 flex flex-col flex-1">
+                          <div className="flex items-start justify-between mb-2">
+                            <div>
+                              <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors line-clamp-1">
+                                {property.propertyAddress || 'Unknown Address'}
+                              </h3>
+                              <div className="flex items-center mt-1 text-gray-300 text-sm">
+                                <Tag className="h-4 w-4 mr-1" />
+                                <span>
+                                  Token: {property.tokenAddress
+                                    ? `${property.tokenAddress.slice(0, 6)}...${property.tokenAddress.slice(-4)}`
+                                    : 'N/A'}
+                                </span>
+                              </div>
+                            </div>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleToggleFavorite(globalIndex);
+                              }}
+                              className="p-2 bg-white/70 rounded-full hover:bg-blue-200 transition-colors z-10 shadow-md btn-press-effect"
+                            >
+                              <Heart
+                                className={`h-6 w-6 ${isFavorite(globalIndex)
+                                  ? 'fill-red-500 text-red-500'
+                                  : 'text-blue-700'
+                                  }`}
+                              />
+                            </button>
+                          </div>
+
+                          <div className="flex justify-between text-sm text-blue-100 mt-4 pb-4 border-b border-blue-200/20">
+                            <div className="flex items-center">
+                              <span className="font-semibold text-lg text-white">{(property as any).bedrooms}</span>
+                              <span className="ml-1">Beds</span>
+                            </div>
+                            <div className="flex items-center">
+                              <span className="font-semibold text-lg text-white">{(property as any).bathrooms}</span>
+                              <span className="ml-1">Baths</span>
+                            </div>
+                            <div className="flex items-center">
+                              <span className="font-semibold text-lg text-white">{(property as any).area}</span>
+                              <span className="ml-1">sqft</span>
                             </div>
                           </div>
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleToggleFavorite(index);
-                            }}
-                            className="p-2 bg-white/70 rounded-full hover:bg-blue-200 transition-colors z-10 shadow-md btn-press-effect"
-                          >
-                            <Heart
-                              className={`h-6 w-6 ${isFavorite(index)
-                                ? 'fill-red-500 text-red-500'
-                                : 'text-blue-700'
-                                }`}
-                            />
-                          </button>
-                        </div>
 
-                        <div className="flex justify-between text-sm text-blue-100 mt-4 pb-4 border-b border-blue-200/20">
-                          <div className="flex items-center">
-                            <span className="font-semibold text-lg text-white">{(property as any).bedrooms}</span>
-                            <span className="ml-1">Beds</span>
+                          <div className="mt-6">
+                            <Link
+                              href={`/page/property/${globalIndex}`}
+                              className="block w-full text-center px-4 py-3 glass-button hover:bg-blue-700 transition-colors font-medium"
+                            >
+                              View Details
+                            </Link>
                           </div>
-                          <div className="flex items-center">
-                            <span className="font-semibold text-lg text-white">{(property as any).bathrooms}</span>
-                            <span className="ml-1">Baths</span>
-                          </div>
-                          <div className="flex items-center">
-                            <span className="font-semibold text-lg text-white">{(property as any).area}</span>
-                            <span className="ml-1">sqft</span>
-                          </div>
-                        </div>
-
-                        <div className="mt-6">
-                          <Link
-                            href={`/page/property/${index}`}
-                            className="block w-full text-center px-4 py-3 glass-button hover:bg-blue-700 transition-colors font-medium"
-                          >
-                            View Details
-                          </Link>
                         </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 ) : (
                   <div className="col-span-3 text-center py-12">
                     <Filter className="h-12 w-12 mx-auto text-gray-500 mb-4" />

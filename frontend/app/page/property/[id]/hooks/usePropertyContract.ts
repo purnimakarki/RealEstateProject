@@ -374,7 +374,14 @@ export const usePropertyContract = (propertyId: number) => {
       setListings(formattedListings);
     } catch (error: any) {
       console.error('Error creating listing:', error);
-      setError(error.message || 'Failed to create listing. Please try again.');
+      // Handle MetaMask user rejection
+      if (error && (error.code === 4001 || error.message?.includes('User denied transaction signature'))) {
+        setError('Transaction cancelled by user.');
+      } else if (error && error.message) {
+        setError(error.message);
+      } else {
+        setError('Failed to create listing. Please try again.');
+      }
     } finally {
       setIsProcessing(false);
     }

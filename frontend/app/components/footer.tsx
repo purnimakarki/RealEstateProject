@@ -19,6 +19,8 @@ const Footer = () => {
   const [animationActive, setAnimationActive] = useState(false);
   // Properly type the stars state
   const [stars, setStars] = useState<Star[]>([]);
+  // Add state for window animation delays
+  const [windowAnimationDelays, setWindowAnimationDelays] = useState<number[][]>([]);
 
   useEffect(() => {
     // Generate stars only on client-side to avoid hydration mismatch
@@ -63,6 +65,17 @@ const Footer = () => {
     return () => {
       if (footer) observer.unobserve(footer);
     };
+  }, []);
+  
+  useEffect(() => {
+    // Generate animation delays for windows in each building
+    setWindowAnimationDelays([
+      Array.from({ length: 56 }, () => Math.random() * 10), // skyscraper 1
+      Array.from({ length: 36 }, () => Math.random() * 10), // skyscraper 2
+      Array.from({ length: 36 }, () => Math.random() * 10), // office building
+      Array.from({ length: 40 }, () => Math.random() * 10), // glass building
+      Array.from({ length: 24 }, () => Math.random() * 10), // small building
+    ]);
   }, []);
   
   const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
@@ -134,7 +147,7 @@ const Footer = () => {
                   key={i} 
                   className="bg-blue-300 rounded-sm opacity-0"
                   style={{
-                    animation: animationActive ? `windowLight 5s infinite ${Math.random() * 10}s` : 'none'
+                    animation: animationActive ? `windowLight 5s infinite ${windowAnimationDelays[0]?.[i] || 0}s` : 'none'
                   }}
                 ></div>
               ))}
@@ -154,7 +167,7 @@ const Footer = () => {
                   key={i} 
                   className="bg-yellow-400 rounded-sm opacity-0"
                   style={{
-                    animation: animationActive ? `windowLight 5s infinite ${Math.random() * 10}s` : 'none'
+                    animation: animationActive ? `windowLight 5s infinite ${windowAnimationDelays[1]?.[i] || 0}s` : 'none'
                   }}
                 ></div>
               ))}
@@ -173,7 +186,7 @@ const Footer = () => {
                   key={i} 
                   className="bg-yellow-400 rounded-sm opacity-0"
                   style={{
-                    animation: animationActive ? `windowLight 7s infinite ${Math.random() * 10}s` : 'none'
+                    animation: animationActive ? `windowLight 7s infinite ${windowAnimationDelays[2]?.[i] || 0}s` : 'none'
                   }}
                 ></div>
               ))}
@@ -194,7 +207,7 @@ const Footer = () => {
                   key={i} 
                   className="bg-blue-400 rounded-sm opacity-0"
                   style={{
-                    animation: animationActive ? `windowLight 6s infinite ${Math.random() * 10}s` : 'none'
+                    animation: animationActive ? `windowLight 6s infinite ${windowAnimationDelays[3]?.[i] || 0}s` : 'none'
                   }}
                 ></div>
               ))}
@@ -215,7 +228,7 @@ const Footer = () => {
                     key={i} 
                     className="bg-blue-300 rounded-sm opacity-0"
                     style={{
-                      animation: animationActive ? `windowLight 4s infinite ${Math.random() * 10}s` : 'none'
+                      animation: animationActive ? `windowLight 4s infinite ${windowAnimationDelays[4]?.[i] || 0}s` : 'none'
                     }}
                   ></div>
                 ))}
