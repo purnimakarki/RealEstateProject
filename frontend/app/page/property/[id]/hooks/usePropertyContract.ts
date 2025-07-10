@@ -5,10 +5,12 @@ import RealEstateTokenFactoryABI from '../../../../../contracts/RealEstateTokenF
 import PropertyTokenABI from '../../../../../contracts/PropertyTokenABI.json';
 import contractAddress from '../../../../../contracts/contract-address.json';
 import { formatImageUrl } from '../../../../components/utils/imageUtils';
-import { useNotification } from '@/app/context/NotificationContext'; 
+import { useNotification } from '@/app/context/NotificationContext';
+import { useToast } from '../../../../components/ui/toast';
 
 export const usePropertyContract = (propertyId: number) => {
-  const { addNotification } = useNotification(); 
+  const { addNotification } = useNotification();
+  const { showToast } = useToast();
   const [account, setAccount] = useState<string>("");
   const [property, setProperty] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -21,8 +23,8 @@ export const usePropertyContract = (propertyId: number) => {
   const [listingPrice, setListingPrice] = useState<number>(60);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [ethPrice] = useState<number>(2000);
-  const tokenPrice = 50; 
-  
+  const tokenPrice = 50;
+
   // Connect wallet
   const connectWallet = async () => {
     if (typeof window !== "undefined" && window.ethereum) {
@@ -186,14 +188,14 @@ export const usePropertyContract = (propertyId: number) => {
       setLoading(false);
     }
   }, [propertyId, tokenPrice]);
-  
+
   // Buy tokens from initial sale
   const buyTokens = async () => {
     if (!account || !property || tokenAmount <= 0 || propertyId === undefined) return;
-    
+
     setIsProcessing(true);
     setError('');
-    
+
     try {
       const provider = window.ethereum ? new ethers.BrowserProvider(window.ethereum) : null;
       if (!provider) throw new Error("Please install MetaMask to continue");
@@ -203,30 +205,30 @@ export const usePropertyContract = (propertyId: number) => {
         RealEstateTokenFactoryABI,
         signer
       );
-      
+
       const totalCostUSD = tokenAmount * tokenPrice;
-      
+
       if (!ethPrice || ethPrice === 0) {
         throw new Error("ETH price is not available. Please try again later.");
       }
-      
+
       const costInEth = totalCostUSD / ethPrice;
-      
+
       if (isNaN(costInEth) || costInEth <= 0) {
         throw new Error("Invalid cost calculation. Please try again.");
       }
-      
+
       const costInEthWithBuffer = costInEth * 1.1;
-      
+
       const totalCostInWei = ethers.parseEther(costInEthWithBuffer.toFixed(18));
-      
+
       const tx = await contract.buyFromSale(propertyId, tokenAmount, {
         value: totalCostInWei
       });
-      
+
       await tx.wait();
       setSuccess(`Successfully purchased ${tokenAmount} tokens!`);
-      
+
       try {
         // Fetch property details to get the original owner
         const propertyDetails = await contract.properties(propertyId);
@@ -266,17 +268,17 @@ export const usePropertyContract = (propertyId: number) => {
       } catch (notificationError) {
         console.error("Error sending notification:", notificationError);
       }
-      
+
       const tokenContract = new ethers.Contract(
         property.tokenAddress,
         PropertyTokenABI,
         provider
       );
-      
+
       const balance = await tokenContract.balanceOf(account);
       const decimals = await tokenContract.decimals();
       setUserBalance(Number(ethers.formatUnits(balance, decimals)));
-      
+
     } catch (error: any) {
       console.error('Error buying tokens:', error);
       setError(error.message || 'Failed to buy tokens. Please try again.');
@@ -284,7 +286,7 @@ export const usePropertyContract = (propertyId: number) => {
       setIsProcessing(false);
     }
   };
-  
+
   // Helper to fetch live ETH price in USD
   const fetchLiveEthPrice = async () => {
     try {
@@ -298,7 +300,7 @@ export const usePropertyContract = (propertyId: number) => {
     }
     return 2000;
   };
-  
+
   // Create a listing to sell tokens
   const createListing = async () => {
     if (!account) {
@@ -377,39 +379,42 @@ export const usePropertyContract = (propertyId: number) => {
       // Handle MetaMask user rejection
       if (error && (error.code === 4001 || error.message?.includes('User denied transaction signature'))) {
         setError('Transaction cancelled by user.');
+        showToast('Transaction cancelled by user.', 'error');
       } else if (error && error.message) {
         setError(error.message);
+        showToast(error.message, 'error');
       } else {
         setError('Failed to create listing. Please try again.');
+        showToast('Failed to create listing. Please try again.', 'error');
       }
     } finally {
       setIsProcessing(false);
     }
   };
-  
+
   // Buy tokens from a listing
   const buyFromListing = async (listingIndex: number) => {
     if (!account || !property || propertyId === undefined) return;
-    
+
     setIsProcessing(true);
-    setError(''); 
-    
+    setError('');
+
     try {
       const provider = window.ethereum ? new ethers.BrowserProvider(window.ethereum) : null;
       if (!provider) throw new Error("Please install MetaMask to continue");
       const signer = await provider.getSigner();
-      
+
       const contract = new ethers.Contract(
         contractAddress.RealEstateTokenFactory,
         RealEstateTokenFactoryABI,
         signer
       );
-      
+
       const listingsData = await contract.getListings(propertyId);
       if (listingIndex >= listingsData.length) {
         throw new Error("Invalid listing index");
       }
-      
+
       const listing = listingsData[listingIndex];
       const numTokensToBuy = listing.tokenAmount;
       const pricePerTokenWei = listing.pricePerToken;
@@ -435,21 +440,21 @@ export const usePropertyContract = (propertyId: number) => {
       const tx = await contract.buyFromListing(propertyId, listingIndex, {
         value: totalCostWei
       });
-      
+
       const receipt = await tx.wait();
-      
+
       setSuccess(`Successfully purchased ${numTokensToBuy.toString()} tokens from listing #${listingIndex + 1}.`);
-      
+
       const currentTimestamp = new Date().toISOString();
       const totalCostForNotification = ethers.formatEther(totalCostWei);
 
-      if (listing.seller && listing.seller.toLowerCase() !== account.toLowerCase()) { 
-        const notificationForSeller = { 
-          type: 'TOKEN_SOLD_IN_RESALE', 
+      if (listing.seller && listing.seller.toLowerCase() !== account.toLowerCase()) {
+        const notificationForSeller = {
+          type: 'TOKEN_SOLD_IN_RESALE',
           propertyId: propertyId,
           tokenAmount: Number(numTokensToBuy),
-          buyerAddress: account, 
-          totalCost: totalCostForNotification, 
+          buyerAddress: account,
+          totalCost: totalCostForNotification,
           timestamp: currentTimestamp,
           propertyName: property?.title || `Property #${propertyId + 1}`
         };
@@ -460,7 +465,7 @@ export const usePropertyContract = (propertyId: number) => {
         type: 'PURCHASE_CONFIRMATION_RESALE',
         propertyId: propertyId,
         tokenAmount: Number(numTokensToBuy),
-        buyerAddress: account, 
+        buyerAddress: account,
         sellerAddress: listing.seller,
         totalCost: totalCostForNotification,
         timestamp: currentTimestamp,
@@ -469,15 +474,15 @@ export const usePropertyContract = (propertyId: number) => {
       };
       addNotification(notificationForBuyer, account);
 
-      fetchProperty(); 
+      fetchProperty();
     } catch (err: any) {
-      console.error('Error buying from listing:', err); 
-      setError(err.message || 'Failed to buy from listing. Please try again.'); 
+      console.error('Error buying from listing:', err);
+      setError(err.message || 'Failed to buy from listing. Please try again.');
     } finally {
       setIsProcessing(false);
     }
   };
-  
+
   // Cancel a listing
   const cancelListing = async (listingIndex: number) => {
     setIsProcessing(true);
@@ -498,12 +503,21 @@ export const usePropertyContract = (propertyId: number) => {
       fetchProperty();
     } catch (err: any) {
       console.error("Error cancelling listing:", err);
-      setError(err.message || "Failed to cancel listing. Please try again.");
+      if (err && (err.code === 4001 || err.message?.includes('User denied transaction signature'))) {
+        setError('Transaction cancelled by user.');
+        showToast('Transaction cancelled by user.', 'error');
+      } else if (err && err.message) {
+        setError(err.message);
+        showToast(err.message, 'error');
+      } else {
+        setError('Failed to cancel listing. Please try again.');
+        showToast('Failed to cancel listing. Please try again.', 'error');
+      }
     } finally {
       setIsProcessing(false);
     }
   };
-  
+
   // Initialize data
   useEffect(() => {
     fetchProperty();

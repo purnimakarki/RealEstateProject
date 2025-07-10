@@ -19,7 +19,7 @@ export default function RootLayout({
         <title>RealEstate</title>
         <link rel="icon" href="/logo2.png" />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-gray-900 text-white`}>
         <Navbar />
         <Providers>
           <PropertyProvider>
