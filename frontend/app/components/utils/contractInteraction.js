@@ -431,9 +431,9 @@ export const getPendingProperties = async () => {
     }).filter(Boolean); // Remove null entries
     
     return formattedPendingProps;
-  } catch (error) {
-    // throw error; // Consider re-throwing or returning an empty array / error object
-    return []; // Return empty array on error to prevent crashes downstream
+  } catch {
+   
+    return []; 
   }
 };
 
@@ -506,7 +506,7 @@ export const isAdmin = async (userAddress) => {
     
     // Ensure case-insensitive comparison of Ethereum addresses
     return ownerAddress.toLowerCase() === userAddress.toLowerCase();
-  } catch (error) {
+  } catch {
     return false;
   }
 };
@@ -524,7 +524,7 @@ export const checkAdminStatus = async (userAddress) => {
     // Simple direct comparison without string conversion
     const isOwner = ownerAddress.toLowerCase() === userAddress.toLowerCase();
     return isOwner;
-  } catch (error) {
+  } catch  {
     return false;
   }
 };
@@ -548,7 +548,7 @@ export const submitProperty = async (propertyAddress, valueUSD, imageUrls) => {
       success: true,
       transactionHash: receipt.hash
     };
-  } catch (error) {
+  } catch {
     throw error;
   }
 };
@@ -558,7 +558,7 @@ export const getEthToUsdRate = async () => {
   try {
  
     return 2000; 
-  } catch (error) {
+  } catch  {
     return 2000; 
   }
 };
@@ -585,7 +585,7 @@ export const getLatestProperty = async () => {
     
     // Return the last property in the array (most recently created)
     return properties[properties.length - 1];
-  } catch (error) {
+  } catch {
     throw error;
   }
 };
@@ -604,7 +604,7 @@ export const navigateToOwnerProfile = async (propertyId) => {
     
     // Return the owner's address
     return property.originalOwner;
-  } catch (error) {
+  } catch  {
     throw error;
   }
 };
@@ -686,7 +686,7 @@ export const getUserSubmittedProperties = async (userAddress) => {
           status: 'rejected'
         }));
       }
-    } catch (err) {
+    } catch {
     }
     
     // Filter properties by user address
@@ -704,7 +704,7 @@ export const getUserSubmittedProperties = async (userAddress) => {
     
     // Combine all user properties
     return [...userPendingProperties, ...userApprovedProperties, ...userRejectedProperties];
-  } catch (error) {
+  } catch {
     return [];
   }
 };

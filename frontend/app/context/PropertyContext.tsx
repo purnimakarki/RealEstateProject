@@ -122,7 +122,7 @@ export const PropertyProvider = ({ children }: { children: React.ReactNode }) =>
           };
         });
       setPendingProperties(formattedProperties as Property[]);
-    } catch (error) {
+    } catch {
       setPendingProperties([]);
     }
   };
@@ -133,13 +133,6 @@ export const PropertyProvider = ({ children }: { children: React.ReactNode }) =>
     if (typeof window !== 'undefined') {
       fetchPendingProperties();
       
-      // Set up an interval to refresh pending properties every 30 seconds
-      // const intervalId = setInterval(() => {
-      //   fetchPendingProperties();
-      // }, 30000);
-      
-      // // Clean up the interval when the component unmounts
-      // return () => clearInterval(intervalId);
     }
   }, []);
 
@@ -159,15 +152,10 @@ export const PropertyProvider = ({ children }: { children: React.ReactNode }) =>
       setApprovedProperties(prev => [...prev, {...property, status: 'approved'}]);
       // Refresh the pending properties list
       await fetchPendingProperties();
-    } catch (error: any) {
+    } catch {
       // Check for the specific error message from the contract
-      if (error.message && error.message.includes("Already handled or invalid")) {
-        // Refresh the list to potentially remove the item from pending
-        await fetchPendingProperties();
-        throw new Error(`Property #${id} might have already been approved or rejected.`);
-      } else {
-        throw error; 
-      }
+      await fetchPendingProperties();
+      throw new Error(`Property #${id} might have already been approved or rejected.`);
     }
   };
 
@@ -187,15 +175,10 @@ export const PropertyProvider = ({ children }: { children: React.ReactNode }) =>
       setRejectedProperties(prev => [...prev, {...property, status: 'rejected'}]);
       // Refresh the pending properties list
       await fetchPendingProperties();
-    } catch (error: any) {
+    } catch {
        // Check for the specific error message from the contract
-      if (error.message && error.message.includes("Already handled or invalid")) {
-         // Refresh the list to potentially remove the item from pending
-        await fetchPendingProperties();
-        throw new Error(`Property #${id} might have already been approved or rejected.`);
-      } else {
-        throw error; 
-      }
+      await fetchPendingProperties();
+      throw new Error(`Property #${id} might have already been approved or rejected.`);
     }
   };
 
@@ -204,7 +187,7 @@ export const PropertyProvider = ({ children }: { children: React.ReactNode }) =>
      
       const existingProperty = prev.find(p => p.id === property.id && p.status === property.status);
       if (existingProperty) {
-        return prev; // Avoid adding a duplicate
+        return prev; 
       }
       return [...prev, property];
     });

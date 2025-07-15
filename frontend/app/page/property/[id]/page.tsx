@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Navbar from '../../../components/navbar';
 import Footer from '../../../components/footer';
 import { 
- ArrowLeft, ArrowRight, Share2
+ ArrowLeft, ArrowRight
 } from 'lucide-react';
 import PropertyHeader from './components/PropertyHeader';
 import PropertyInformation from './components/PropertyInformation';

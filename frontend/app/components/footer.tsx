@@ -13,13 +13,9 @@ type Star = {
 };
 
 const Footer = () => {
-  const [email, setEmail] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [animationActive, setAnimationActive] = useState(false);
-  // Properly type the stars state
   const [stars, setStars] = useState<Star[]>([]);
-  // Add state for window animation delays
   const [windowAnimationDelays, setWindowAnimationDelays] = useState<number[][]>([]);
 
   useEffect(() => {
@@ -39,12 +35,12 @@ const Footer = () => {
     // Add animation when component mounts
     setIsVisible(true);
     
-    // Start cityscape animations after a delay
+    
     setTimeout(() => {
       setAnimationActive(true);
     }, 500);
     
-    // Intersection Observer to trigger animations when scrolling to footer
+ 
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
@@ -78,14 +74,7 @@ const Footer = () => {
     ]);
   }, []);
   
-  const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (email) {
-      setIsSubmitted(true);
-      setTimeout(() => setIsSubmitted(false), 3000);
-      setEmail('');
-    }
-  };
+  // Remove isSubmitted and handleSubscribe as they are no longer used after removing the subscribe section.
 
   return (
     <footer 

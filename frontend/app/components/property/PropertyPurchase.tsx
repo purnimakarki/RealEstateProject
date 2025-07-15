@@ -36,6 +36,7 @@ export default function PropertyPurchase({
   const [ethPrice] = useState<number>(2000); 
   
   // Calculate token price based on property value
+  const tokenPrice = purchaseType === 'sale' ? 50 : listingPrice || 50; // Default $50 per token
   const totalTokens = Math.floor(propertyPrice / 50);
   const maxTokens = purchaseType === 'listing' ? (listingTokenAmount || 1) : totalTokens;
   
