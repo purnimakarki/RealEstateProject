@@ -60,7 +60,7 @@ export const getAllProperties = async () => {
       properties.push({
         id: i,
         address: propertyAddresses[i],
-        value: ethers.formatUnits(values[i], 18), // Format with 18 decimals
+        value: ethers.formatUnits(values[i], 18), 
         tokenAddress: tokenAddresses[i],
         images: propertyImageURLs[i] ? 
           propertyImageURLs[i].map(url => 
@@ -71,7 +71,6 @@ export const getAllProperties = async () => {
 
     return properties;
   } catch (error) {
-    console.error("Error fetching properties:", error);
     throw error;
   }
 };
@@ -89,9 +88,6 @@ export const buyTokensFromSale = async (propertyId, tokenAmount) => {
     // $50 per token converted to wei (10^18)
     const tokenPriceWei = ethers.parseUnits("50", 18);
     const totalCost = tokenPriceWei * BigInt(tokenAmount);
-
-    console.log(`Buying ${tokenAmount} tokens for property #${propertyId}`);
-    console.log(`Total cost: ${ethers.formatEther(totalCost)} ETH`);
     
     const tx = await contract.buyFromSale(propertyId, tokenAmount, {
       value: totalCost,
@@ -104,7 +100,6 @@ export const buyTokensFromSale = async (propertyId, tokenAmount) => {
       tokenAmount: tokenAmount
     };
   } catch (error) {
-    console.error("Error buying tokens from sale:", error);
     throw error;
   }
 };
@@ -130,9 +125,6 @@ export const buyTokensFromListingV2 = async (propertyId, listingIndex) => {
     const ethRate = await getEthToUsdRate();
     const costInEth = totalCostUSD / ethRate;
     const totalCost = ethers.parseEther(costInEth.toString());
-
-    console.log(`Buying ${tokenAmount} tokens from listing #${listingIndex}`);
-    console.log(`Total cost: $${totalCostUSD} (${costInEth} ETH)`);
     
     const tx = await contract.buyFromListing(propertyId, listingIndex, {
       value: totalCost,
@@ -146,7 +138,6 @@ export const buyTokensFromListingV2 = async (propertyId, listingIndex) => {
       seller: listing.seller
     };
   } catch (error) {
-    console.error("Error buying tokens from listing:", error);
     throw error;
   }
 };
@@ -169,7 +160,6 @@ export const getUserTokenBalance = async (propertyId, userAddress) => {
 
     return ethers.formatUnits(balance, decimals);
   } catch (error) {
-    console.error("Error getting token balance:", error);
     throw error;
   }
 };
@@ -225,7 +215,6 @@ export const listTokensForSaleFromProfile = async (propertyId, tokenAmount, pric
     // Wait for transaction to be mined
     return await tx.wait();
   } catch (error) {
-    console.error("Error listing tokens for sale:", error);
     throw error;
   }
 };
@@ -250,7 +239,6 @@ export const buyTokensFromListing = async (propertyId, listingIndex) => {
     });
     return await tx.wait();
   } catch (error) {
-    console.error("Error buying tokens from listing:", error);
     throw error;
   }
 };
@@ -268,7 +256,6 @@ export const getActiveListings = async (propertyId) => {
       pricePerToken: ethers.formatEther(listing.pricePerToken),
     }));
   } catch (error) {
-    console.error("Error fetching active listings:", error);
     throw error;
   }
 };
@@ -279,7 +266,6 @@ export const getPropertyBuyers = async (propertyId) => {
     const contract = await getFactoryContract();
     return await contract.getBuyers(propertyId);
   } catch (error) {
-    console.error("Error fetching property buyers:", error);
     throw error;
   }
 };
@@ -291,7 +277,6 @@ export const getBuyerInfo = async (propertyId, userAddress) => {
     const tokensBought = await contract.getBuyerInfo(propertyId, userAddress);
     return ethers.formatUnits(tokensBought, 0);
   } catch (error) {
-    console.error("Error fetching buyer info:", error);
     throw error;
   }
 };
@@ -301,7 +286,6 @@ export const uploadToIPFS = async (files) => {
   try {
     // Convert to array if a single file is passed
     const fileArray = Array.isArray(files) ? files : [files];
-    console.log('Files to upload to IPFS:', fileArray);
 
     // Create FormData for Pinata API
     const formData = new FormData();
@@ -326,7 +310,6 @@ export const uploadToIPFS = async (files) => {
     // Return the IPFS hash
     return `${res.data.IpfsHash}`;
   } catch (error) {
-    console.error('Error uploading to IPFS:', error);
     throw error;
   }
 };
@@ -342,7 +325,6 @@ export const getFeaturedProperties = async (limit = 3) => {
     
     return sortedProperties.slice(0, limit);
   } catch (error) {
-    console.error("Error fetching featured properties:", error);
     throw error;
   }
 };
@@ -390,7 +372,6 @@ export const listTokensForSale = async (propertyId, tokenAmount, pricePerToken) 
     // Wait for transaction to be mined
     return await tx.wait();
   } catch (error) {
-    console.error("Error listing tokens for sale:", error);
     throw error;
   }
 };
@@ -398,25 +379,14 @@ export const listTokensForSale = async (propertyId, tokenAmount, pricePerToken) 
 // Get pending properties for admin dashboard
 export const getPendingProperties = async () => {
   try {
-    console.log("Getting pending properties from contract...");
     const contract = await getFactoryContract();
-    const rawPendingProps = await contract.getPendingProperties(); // Renamed to rawPendingProp
-    
-    // It's crucial to know the structure of rawPendingProps here.
-    // Log it to be sure, handling BigInts for stringification:
-    console.log("Raw pending properties from contract:", JSON.stringify(rawPendingProps, (key, value) =>
-      typeof value === 'bigint'
-        ? value.toString()
-        : value // return everything else unchanged
-    ));
+    const rawPendingProps = await contract.getPendingProperties(); 
 
    
 
-    const propertyStructs = rawPendingProps[1]; // Or rawPendingProps if it's not nested
-    const propertyIds = rawPendingProps[0]; // Corresponding IDs
-
+    const propertyStructs = rawPendingProps[1]; 
+    const propertyIds = rawPendingProps[0]; 
     if (!propertyStructs || propertyStructs.length === 0) {
-      console.log("No pending property structs found in contract data");
       return [];
     }
     
@@ -434,8 +404,8 @@ export const getPendingProperties = async () => {
         typeof url === 'string' && (url.startsWith('http') || url.startsWith('/')) ? url : `https://gateway.pinata.cloud/ipfs/${url}`
       );
       return {
-        // id: propertyIds[index].toString(), // Use the actual ID from the contract, ensure it's a string if needed by Property type
-        contractIndex: propertyIds[index].toString(), // Changed to match Property type if it expects string
+       
+        contractIndex: propertyIds[index].toString(), 
         propertyAddress: prop.propertyAddress || '',
         value: formattedValue,
         originalOwner: prop.originalOwner || '',
@@ -460,10 +430,8 @@ export const getPendingProperties = async () => {
       };
     }).filter(Boolean); // Remove null entries
     
-    console.log("Received properties (after formatting):", formattedPendingProps);
     return formattedPendingProps;
   } catch (error) {
-    console.error("Error fetching pending properties:", error);
     // throw error; // Consider re-throwing or returning an empty array / error object
     return []; // Return empty array on error to prevent crashes downstream
   }
@@ -496,10 +464,8 @@ export const getAllListings = async () => {
       }
     }
     
-    console.log("All listings:", allListings);
     return allListings;
   } catch (error) {
-    console.error("Error fetching all listings:", error);
     throw error;
   }
 };
@@ -512,7 +478,6 @@ export const approvePropertyContract = async (pendingIndex) => {
     await tx.wait();
     return true;
   } catch (error) {
-    console.error("Error approving property:", error);
     throw error;
   }
 };
@@ -525,7 +490,6 @@ export const rejectPropertyContract = async (pendingIndex) => {
     await tx.wait();
     return true;
   } catch (error) {
-    console.error("Error rejecting property:", error);
     throw error;
   }
 };
@@ -534,20 +498,15 @@ export const rejectPropertyContract = async (pendingIndex) => {
 export const isAdmin = async (userAddress) => {
   try {
     if (!userAddress) {
-      console.error("No user address provided");
       return false;
     }
     
     const contract = await getFactoryContract();
     const ownerAddress = await contract.owner();
     
-    console.log("Contract owner:", ownerAddress);
-    console.log("Current user:", userAddress);
-    
     // Ensure case-insensitive comparison of Ethereum addresses
     return ownerAddress.toLowerCase() === userAddress.toLowerCase();
   } catch (error) {
-    console.error("Error checking admin status:", error);
     return false;
   }
 };
@@ -556,7 +515,6 @@ export const isAdmin = async (userAddress) => {
 export const checkAdminStatus = async (userAddress) => {
   try {
     if (!userAddress) {
-      console.error("No user address provided");
       return false;
     }
     
@@ -565,10 +523,8 @@ export const checkAdminStatus = async (userAddress) => {
     
     // Simple direct comparison without string conversion
     const isOwner = ownerAddress.toLowerCase() === userAddress.toLowerCase();
-    console.log("Admin check result:", isOwner);
     return isOwner;
   } catch (error) {
-    console.error("Error in checkAdminStatus:", error);
     return false;
   }
 };
@@ -593,7 +549,6 @@ export const submitProperty = async (propertyAddress, valueUSD, imageUrls) => {
       transactionHash: receipt.hash
     };
   } catch (error) {
-    console.error("Error submitting property:", error);
     throw error;
   }
 };
@@ -601,12 +556,10 @@ export const submitProperty = async (propertyAddress, valueUSD, imageUrls) => {
 // Get ETH to USD conversion rate (mock implementation)
 export const getEthToUsdRate = async () => {
   try {
-    // In a real implementation, you would fetch this from an API
-    // For now, we'll return a fixed rate
-    return 2000; // 1 ETH = $2000 USD
+ 
+    return 2000; 
   } catch (error) {
-    console.error("Error fetching ETH to USD rate:", error);
-    return 2000; // Default fallback
+    return 2000; 
   }
 };
 
@@ -633,7 +586,6 @@ export const getLatestProperty = async () => {
     // Return the last property in the array (most recently created)
     return properties[properties.length - 1];
   } catch (error) {
-    console.error("Error fetching latest property:", error);
     throw error;
   }
 };
@@ -653,7 +605,6 @@ export const navigateToOwnerProfile = async (propertyId) => {
     // Return the owner's address
     return property.originalOwner;
   } catch (error) {
-    console.error("Error navigating to owner profile:", error);
     throw error;
   }
 };
@@ -736,7 +687,6 @@ export const getUserSubmittedProperties = async (userAddress) => {
         }));
       }
     } catch (err) {
-      console.log("Contract doesn't support getRejectedProperties or other error:", err);
     }
     
     // Filter properties by user address
@@ -755,7 +705,6 @@ export const getUserSubmittedProperties = async (userAddress) => {
     // Combine all user properties
     return [...userPendingProperties, ...userApprovedProperties, ...userRejectedProperties];
   } catch (error) {
-    console.error("Error fetching user submitted properties:", error);
     return [];
   }
 };

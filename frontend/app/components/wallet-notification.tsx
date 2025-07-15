@@ -13,7 +13,7 @@ function WalletNotificationContent() {
     // Check if user was redirected due to wallet requirement
     const walletRequired = searchParams.get('walletRequired');
     
-    // Only show alert if we haven't shown it yet and walletRequired is true
+   
     if (walletRequired === 'true' && !hasShownAlert.current) {
       hasShownAlert.current = true;
       
@@ -43,7 +43,7 @@ function WalletNotificationContent() {
     }
   }, [searchParams, connectWallet, router]);
 
-  return null; // This component doesn't render anything
+  return null; 
 }
 
 export function WalletNotification() {

@@ -232,7 +232,7 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
         // Use addNotification from context
         if (propertyOwner && propertyOwner !== ethers.ZeroAddress) {
           addNotification(notificationData, propertyOwner);
-          console.log(`Notification sent to property owner ${propertyOwner}:`, notificationData);
+         
         } else {
           console.warn("Could not determine property owner or owner is zero address. Notification not sent to owner.");
         }
@@ -240,10 +240,10 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
         // Optionally, send a notification to the buyer as well
         const buyerNotificationData = {
           ...notificationData,
-          type: 'PURCHASE_CONFIRMATION', // Different type for buyer
+          type: 'PURCHASE_CONFIRMATION', 
         };
         addNotification(buyerNotificationData, account);
-        console.log(`Purchase confirmation notification sent to buyer ${account}:`, buyerNotificationData);
+        
 
       } catch (notificationError) {
         console.error('Error creating notification:', notificationError);
@@ -254,11 +254,11 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
     } catch (err: any) {
       console.error("Error buying tokens:", err);
       let userMessage = "Failed to buy tokens. Please try again.";
-      // MetaMask user rejected
+    
       if (err.code === 4001 || err.code === "ACTION_REJECTED") {
         userMessage = "Transaction was rejected by the user.";
       }
-      // Insufficient funds
+     
       else if (
         err.message?.toLowerCase().includes("insufficient funds") ||
         err.reason?.toLowerCase().includes("insufficient funds")
@@ -282,9 +282,7 @@ const TokenPurchaseSection: React.FC<TokenPurchaseSectionProps> = ({
       setIsProcessing(false);
     }
   };
-  
- 
-  
+    
   if (!property) return null;
   
   return (

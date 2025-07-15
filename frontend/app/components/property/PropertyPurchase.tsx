@@ -8,9 +8,9 @@ interface PropertyPurchaseProps {
   propertyId: number;
   propertyPrice: number;
   tokenAddress: string;
-  listingIndex?: number; // Optional - only needed for buying from listing
-  listingPrice?: number; // Optional - only needed for buying from listing
-  listingTokenAmount?: number; // Optional - only needed for buying from listing
+  listingIndex?: number; 
+  listingPrice?: number;
+  listingTokenAmount?: number;
   purchaseType: 'sale' | 'listing';
   onSuccess?: (data: any) => void;
   onError?: (error: Error) => void;
@@ -33,10 +33,9 @@ export default function PropertyPurchase({
   const [error, setError] = useState<string | null>(null);
  
   const [userBalance, setUserBalance] = useState<number>(0);
-  const [ethPrice] = useState<number>(2000); // Default ETH price in USD
+  const [ethPrice] = useState<number>(2000); 
   
   // Calculate token price based on property value
-  const tokenPrice = purchaseType === 'sale' ? 50 : listingPrice || 50; // Default $50 per token
   const totalTokens = Math.floor(propertyPrice / 50);
   const maxTokens = purchaseType === 'listing' ? (listingTokenAmount || 1) : totalTokens;
   
@@ -77,10 +76,7 @@ export default function PropertyPurchase({
       }
       
       setTransactionHash(result.transactionHash);
-      // In the handlePurchase function, remove this line:
-      // setSuccess(true);
       
-      // Call success callback if provided
       if (onSuccess) onSuccess(result);
       
     } catch (err: any) {

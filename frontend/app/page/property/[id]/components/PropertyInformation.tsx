@@ -102,7 +102,7 @@ const PropertyInformation: React.FC<PropertyInformationProps> = ({ property }) =
                     >
                       {displayName}
                     </a>
-                    <div className="text-xs text-gray-400 mt-1">IPFS Document</div>
+                    <div className="text-xs text-gray-400 mt-1">Document</div>
                   </div>
                   <a
                     href={ipfsUrl}

@@ -13,7 +13,7 @@ interface PropertyBuyProps {
 
 export default function PropertyBuy({ propertyId }: PropertyBuyProps) {
   const { account } = useWallet();
-  const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null); // Replaced 'any' with 'ethers.BrowserProvider | null'
+  const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null); 
   const [tokenAmount, setTokenAmount] = useState<number>(1);
   const [pricePerToken, setPricePerToken] = useState<number>(50);
   const [tokenBalance, setTokenBalance] = useState<number>(0);

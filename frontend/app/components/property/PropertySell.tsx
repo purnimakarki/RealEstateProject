@@ -21,7 +21,6 @@ export default function PropertySell({ propertyId }: PropertySellProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
   
-  // Remove the separate provider initialization useEffect
   
   // Calculate total sale value
   const totalValue = tokenAmount * pricePerToken;

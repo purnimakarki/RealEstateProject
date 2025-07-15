@@ -126,7 +126,6 @@ export default function FeaturedProperties() {
             };
           });
           
-          console.log('Processed properties:', formattedProperties);
           setFeaturedProperties(formattedProperties);
         }
       } catch (error) {
@@ -159,10 +158,7 @@ export default function FeaturedProperties() {
   };
 
   return (
-    <div className="py-24 bg-gradient-to-b from-blue-50 to-white relative overflow-hidden">
-    
-     
-      
+    <div className="py-24 bg-gradient-to-b from-blue-50 to-white relative overflow-hidden">      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center">
           <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">Exclusive Selection</span>
@@ -172,7 +168,7 @@ export default function FeaturedProperties() {
         </div>
         
         <div className="mt-16 grid gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {/* Ensure featuredProperties is an array before calling .map() */}
+          
           {Array.isArray(featuredProperties) && featuredProperties.length > 0 ? (
             featuredProperties.map((property) => (
               <div 
@@ -230,11 +226,11 @@ export default function FeaturedProperties() {
                   <div className="flex justify-between text-sm text-gray-600 mt-6 pb-6 border-b border-gray-100">
                     <div className="flex items-center">
                       <Bed className="h-4 w-4 mr-1 text-blue-500" />
-                      <span>{property.bedrooms} Beds</span>
+                      <span>{property.bedrooms} Bedrooms</span>
                     </div>
                     <div className="flex items-center">
                       <Bath className="h-4 w-4 mr-1 text-blue-500" />
-                      <span>{property.bathrooms} Baths</span>
+                      <span>{property.bathrooms} Bathrooms</span>
                     </div>
                     <div className="flex items-center">
                       <Square className="h-4 w-4 mr-1 text-blue-500" />

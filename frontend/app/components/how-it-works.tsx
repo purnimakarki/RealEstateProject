@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronRight,  Globe, Zap, TrendingUp, Shield, Users, DollarSign, ArrowRight, Building, Coins, Eye, PieChart, Wallet, Star, CheckCircle } from 'lucide-react';
 import { useWallet } from '../components/hooks/usewallet';
 import { useRouter } from 'next/navigation';
+import Footer from './footer';
 
 export default function HowItWorksRedesign() {
   const [activeStep, setActiveStep] = useState(0);
@@ -44,7 +45,7 @@ export default function HowItWorksRedesign() {
     },
     {
       icon: <Coins className="w-12 h-12" />,
-      title: "Tokenization Process",
+      title: "Tokenization ",
       description: "Transform your property into secure digital tokens representing fractional ownership shares",
       color: "from-stone-600 to-slate-600",
       bgImage: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
@@ -295,40 +296,57 @@ export default function HowItWorksRedesign() {
 
         {/* Tokenization Visualization */}
         <section className="mb-24">
-          <div className="bg-gradient-to-r from-slate-600/20 to-gray-600/20 backdrop-blur-lg rounded-3xl p-12 border border-white/20">
-            <h2 className="text-4xl font-bold text-white text-center mb-12">Tokenization Process</h2>
-            <div className="flex items-center justify-center">
-              <div className="flex items-center space-x-8">
-                <div className="text-center">
-                  <div className="w-32 h-32 bg-gradient-to-r from-slate-600 to-gray-600 rounded-3xl flex items-center justify-center mb-4 shadow-2xl">
-                    <Building className="w-16 h-16 text-white" />
-                  </div>
-                  <h3 className="text-white font-bold text-lg">Physical Property</h3>
-                  <p className="text-gray-300 text-sm">$1,000,000</p>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className="w-3 h-3 bg-gray-400 rounded-full animate-pulse" style={{animationDelay: `${i * 200}ms`}}></div>
-                  ))}
-                  <ArrowRight className="w-8 h-8 text-gray-400 animate-pulse" />
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className="w-3 h-3 bg-slate-400 rounded-full animate-pulse" style={{animationDelay: `${(i + 5) * 200}ms`}}></div>
-                  ))}
-                </div>
-                
-                <div className="text-center">
-                  <div className="w-32 h-32 bg-gradient-to-r from-stone-600 to-zinc-600 rounded-3xl flex items-center justify-center mb-4 shadow-2xl">
-                    <div className="grid grid-cols-3 gap-2">
-                      {[...Array(9)].map((_, i) => (
-                        <div key={i} className="w-4 h-4 bg-white/90 rounded"></div>
-                      ))}
-                    </div>
-                  </div>
-                  <h3 className="text-white font-bold text-lg">10,000 Tokens</h3>
-                  <p className="text-gray-300 text-sm">$100 each</p>
-                </div>
+          <div className="bg-gradient-to-r from-slate-700/60 to-gray-900/60 backdrop-blur-lg rounded-3xl p-12 border border-white/20 shadow-2xl">
+            <h2 className="text-4xl font-extrabold text-white text-center mb-4 drop-shadow-lg">Tokenization Process</h2>
+            <p className="text-center text-gray-300 mb-10 text-lg max-w-2xl mx-auto">
+              We transform real estate into digital tokens through a secure, transparent, and compliant process. Here’s how your property becomes a blockchain investment opportunity:
+            </p>
+            <div className="flex flex-col md:flex-row items-center justify-center gap-8 animate-fade-in">
+              {/* Step 1 */}
+              <div className="flex flex-col items-center group transition-transform duration-300 hover:scale-105">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold mb-2 shadow-xl group-hover:shadow-2xl transition-all">1</div>
+                <Building className="w-10 h-10 text-blue-300 mb-2 animate-bounce" />
+                <span className="text-white font-semibold text-lg">Property Valuation</span>
+                <span className="text-gray-400 text-xs text-center">Professional assessment of property value</span>
               </div>
+              {/* Arrow */}
+              <ArrowRight className="w-8 h-8 text-blue-400 mx-2 hidden md:block animate-pulse" />
+              {/* Step 2 */}
+              <div className="flex flex-col items-center group transition-transform duration-300 hover:scale-105">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold mb-2 shadow-xl group-hover:shadow-2xl transition-all">2</div>
+                <Shield className="w-10 h-10 text-blue-300 mb-2 animate-bounce delay-100" />
+                <span className="text-white font-semibold text-lg">Legal Verification</span>
+                <span className="text-gray-400 text-xs text-center">Ensuring compliance and documentation</span>
+              </div>
+              <ArrowRight className="w-8 h-8 text-blue-400 mx-2 hidden md:block animate-pulse" />
+              {/* Step 3 */}
+              <div className="flex flex-col items-center group transition-transform duration-300 hover:scale-105">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold mb-2 shadow-xl group-hover:shadow-2xl transition-all">3</div>
+                <Zap className="w-10 h-10 text-blue-300 mb-2 animate-bounce delay-200" />
+                <span className="text-white font-semibold text-lg">Smart Contract</span>
+                <span className="text-gray-400 text-xs text-center">Automated, secure contract creation</span>
+              </div>
+              <ArrowRight className="w-8 h-8 text-blue-400 mx-2 hidden md:block animate-pulse" />
+              {/* Step 4 */}
+              <div className="flex flex-col items-center group transition-transform duration-300 hover:scale-105">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold mb-2 shadow-xl group-hover:shadow-2xl transition-all">4</div>
+                <Coins className="w-10 h-10 text-blue-300 mb-2 animate-bounce delay-300" />
+                <span className="text-white font-semibold text-lg">Token Generation</span>
+                <span className="text-gray-400 text-xs text-center">Fractional tokens minted on blockchain</span>
+              </div>
+              <ArrowRight className="w-8 h-8 text-blue-400 mx-2 hidden md:block animate-pulse" />
+              {/* Step 5 */}
+              <div className="flex flex-col items-center group transition-transform duration-300 hover:scale-105">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold mb-2 shadow-xl group-hover:shadow-2xl transition-all">5</div>
+                <TrendingUp className="w-10 h-10 text-blue-300 mb-2 animate-bounce delay-400" />
+                <span className="text-white font-semibold text-lg">Investment</span>
+                <span className="text-gray-400 text-xs text-center">Tokens available for global investors</span>
+              </div>
+            </div>
+            <div className="mt-10 text-center text-gray-400 text-sm">
+              <span className="inline-block bg-blue-900/40 px-4 py-2 rounded-full shadow-inner">
+                Each step is secured by blockchain technology, ensuring transparency, security, and efficiency for all participants.
+              </span>
             </div>
           </div>
         </section>
@@ -382,6 +400,7 @@ export default function HowItWorksRedesign() {
           </div>
         </section>
       </main>
+      <Footer />
     </div>
   );
 }

@@ -254,10 +254,10 @@ export const usePropertyContract = (propertyId: number) => {
 
         // Notification for Buyer
         const notificationForBuyer = {
-          type: 'PROPERTY_PURCHASED', // Standardized type
+          type: 'PROPERTY_PURCHASED', 
           propertyId: propertyId,
           tokenAmount: tokenAmount,
-          buyerAddress: account, // Buyer is the current user
+          buyerAddress: account, 
           totalCost: totalCostFormatted,
           timestamp: currentTimestamp,
           propertyName: property?.title || `Property #${propertyId + 1}`,

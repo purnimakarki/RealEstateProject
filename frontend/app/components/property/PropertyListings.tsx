@@ -91,8 +91,8 @@ export default function PropertyListings({ propertyId }: PropertyListingsProps) 
       const listing = listingsData[listingIndex];
       const totalCost = listing.tokenAmount * listing.pricePerToken;
       
-      console.log(`Buying from listing #${listingIndex}`);
-      console.log(`Total cost in wei: ${totalCost.toString()}`);
+      // console.log(`Buying from listing #${listingIndex}`);
+      // console.log(`Total cost in wei: ${totalCost.toString()}`);
       
       // Call the buyFromListing function with the exact wei amount
       const tx = await contract.buyFromListing(propertyId, listingIndex, {

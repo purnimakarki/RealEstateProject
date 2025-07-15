@@ -12,7 +12,7 @@ import PropertyInformation from './components/PropertyInformation';
 import TokenPurchaseSection from './components/TokenPurchaseSection';
 import TokenListingsSection from './components/TokenListingsSection';
 import { usePropertyContract } from './hooks/usePropertyContract';
-// import ethers from 'ethers';
+
 
 
 export default function PropertyDetails() {
@@ -108,7 +108,7 @@ export default function PropertyDetails() {
               {property.images && property.images.length > 0 ? (
                 <>
                   <Image
-                    src={property.images[currentImageIndex]} // Ensure this is a valid URL
+                    src={property.images[currentImageIndex]} 
                     alt={property.title || 'Property image'}
                     fill
                     className="object-cover"
@@ -119,7 +119,7 @@ export default function PropertyDetails() {
                   
                   <button
                     onClick={prevImage}
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 bg-black/50 rounded-full hover:bg-black/70 transition-colors"
+                    className="absolute  top-1/2 transform -translate-y-1/2 z-10 bg-black/60 rounded-full p-2 hover:bg-black/80 transition-all shadow-lg"
                     disabled={property.images.length <= 1}
                   >
                     <ArrowLeft className="h-6 w-6 text-white" />
@@ -127,17 +127,13 @@ export default function PropertyDetails() {
                   
                   <button
                     onClick={nextImage}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 bg-black/50 rounded-full hover:bg-black/70 transition-colors"
+                    className="absolute  top-1/2 transform -translate-y-1/2 p-2 bg-black/50 rounded-full hover:bg-black/70 transition-colors"
                     disabled={property.images.length <= 1}
                   >
                     <ArrowRight className="h-6 w-6 text-white" />
                   </button>
                   
-                  <div className="absolute bottom-4 right-4">
-                    <button className="p-2 bg-black/50 rounded-full hover:bg-black/70 transition-colors">
-                      <Share2 className="h-5 w-5 text-white" />
-                    </button>
-                  </div>
+                  
                   
                   {property.images.length > 1 && (
                     <div className="absolute bottom-4 left-4 flex space-x-2">
@@ -156,8 +152,7 @@ export default function PropertyDetails() {
               ) : (
                 <div className="text-center text-gray-400">
                   <p>No images available for this property.</p>
-                  {/* You can add a placeholder image component here if you have one */}
-                  {/* e.g., <Image src="/placeholder-image.jpg" alt="No image available" width={500} height={300} /> */}
+                  
                 </div>
               )}
             </div>
@@ -167,7 +162,7 @@ export default function PropertyDetails() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Column */}
             <div className="lg:col-span-2">
-              {/* Property Information */}
+            
               <PropertyInformation property={property} />
               
               {/* Token Listings Section */}

@@ -24,7 +24,7 @@ export type Property = {
   bedrooms?: number | string; 
   bathrooms?: number | string; 
   area?: number | string;
-  // Add all fields from the contract struct
+ 
   propertyType?: string;
   yearBuilt?: number | string;
   city?: string;
@@ -54,17 +54,14 @@ export const PropertyProvider = ({ children }: { children: React.ReactNode }) =>
   // Function to fetch pending properties
   const fetchPendingProperties = async () => {
     try {
-      console.log('Fetching pending properties...');
       
       // Check if window is defined (client-side only)
       if (typeof window === 'undefined') {
-        console.log('Window is undefined, skipping fetch');
         return;
       }
       
       // Check if ethereum provider is available
       if (!window.ethereum) {
-        console.log('Ethereum provider not available');
         return;
       }
       
@@ -72,23 +69,17 @@ export const PropertyProvider = ({ children }: { children: React.ReactNode }) =>
       
       // Add this check to handle empty or invalid properties early
       if (!properties || !Array.isArray(properties) || properties.length === 0) {
-        console.log('No pending properties found or invalid data received');
         setPendingProperties([]);
         return;
       }
-      
-      console.log('Raw pending properties from contract:', properties);
       
       // Filter out invalid properties first
       const validProperties = properties.filter(prop => 
         prop && (prop.propertyAddress || prop.value)
       );
       
-      console.log('Valid properties count:', validProperties.length);
-      
       // If no valid properties remain after filtering, update state and return
       if (validProperties.length === 0) {
-        console.log('No valid pending properties found');
         setPendingProperties([]);
         return;
       }
@@ -115,7 +106,7 @@ export const PropertyProvider = ({ children }: { children: React.ReactNode }) =>
             originalIndex: index, // Store the UI index
             contractIndex: prop?.contractIndex || index,
             originalOwner: prop?.originalOwner || '', 
-            // Map new fields, defaulting to undefined if not present in prop
+           
             title: prop?.title,
             description: prop?.description,
             apartmentType: prop?.apartmentType,
@@ -130,11 +121,8 @@ export const PropertyProvider = ({ children }: { children: React.ReactNode }) =>
             amenities: prop?.amenities,
           };
         });
-      
-      console.log('Formatted properties:', formattedProperties);
       setPendingProperties(formattedProperties as Property[]);
     } catch (error) {
-      console.error('Error fetching pending properties:', error);
       setPendingProperties([]);
     }
   };
@@ -159,29 +147,21 @@ export const PropertyProvider = ({ children }: { children: React.ReactNode }) =>
     // Find the property to approve
     const property = pendingProperties.find(p => p.id === id);
     if (!property) {
-      console.error(`Property with id ${id} not found`);
       return;
     }
-
     try {
       // Use the contractIndex from the property object
       const contractIndex = property.contractIndex !== undefined ? property.contractIndex : id;
-      console.log(`Approving property with UI id ${id}, contract index ${contractIndex}`);
-      
       // Call the contract to approve the property
       await approvePropertyContract(contractIndex);
-      
       // Update local state
       setPendingProperties(prev => prev.filter(p => p.id !== id));
       setApprovedProperties(prev => [...prev, {...property, status: 'approved'}]);
-      
       // Refresh the pending properties list
       await fetchPendingProperties();
     } catch (error: any) {
-      console.error('Error approving property:', error);
       // Check for the specific error message from the contract
       if (error.message && error.message.includes("Already handled or invalid")) {
-        console.warn(`Property with contract index ${property.contractIndex} might have already been processed.`);
         // Refresh the list to potentially remove the item from pending
         await fetchPendingProperties();
         throw new Error(`Property #${id} might have already been approved or rejected.`);
@@ -195,29 +175,21 @@ export const PropertyProvider = ({ children }: { children: React.ReactNode }) =>
     // Find the property to reject
     const property = pendingProperties.find(p => p.id === id);
     if (!property) {
-      console.error(`Property with id ${id} not found`);
       return;
     }
-
     try {
       // Use the contractIndex from the property object
       const contractIndex = property.contractIndex !== undefined ? property.contractIndex : id;
-      console.log(`Rejecting property with UI id ${id}, contract index ${contractIndex}`);
-      
       // Call the contract to reject the property
       await rejectPropertyContract(contractIndex);
-      
       // Update local state
       setPendingProperties(prev => prev.filter(p => p.id !== id));
       setRejectedProperties(prev => [...prev, {...property, status: 'rejected'}]);
-      
       // Refresh the pending properties list
       await fetchPendingProperties();
     } catch (error: any) {
-      console.error('Error rejecting property:', error);
        // Check for the specific error message from the contract
       if (error.message && error.message.includes("Already handled or invalid")) {
-        console.warn(`Property with contract index ${property.contractIndex} might have already been processed.`);
          // Refresh the list to potentially remove the item from pending
         await fetchPendingProperties();
         throw new Error(`Property #${id} might have already been approved or rejected.`);
@@ -229,10 +201,7 @@ export const PropertyProvider = ({ children }: { children: React.ReactNode }) =>
 
   const addProperty = async (property: Property) => {
     setPendingProperties(prev => {
-      // Prevent adding duplicate temporary properties if this function is called multiple times rapidly
-      // This assumes 'id' for a new pending property is unique at the time of addition
-      // or that properties from contract will have different (likely numeric) IDs.
-      // It also checks the status to be more specific.
+     
       const existingProperty = prev.find(p => p.id === property.id && p.status === property.status);
       if (existingProperty) {
         return prev; // Avoid adding a duplicate
@@ -240,11 +209,7 @@ export const PropertyProvider = ({ children }: { children: React.ReactNode }) =>
       return [...prev, property];
     });
     
-    // await fetchPendingProperties(); // Removed this line.
-                                    // This call could overwrite the optimistic update if the contract 
-                                    // hasn't processed the submission yet. Pending properties will 
-                                    // be refreshed by other mechanisms, like on profile page load 
-                                    // or periodic refresh.
+  
   };
 
   return (
@@ -257,7 +222,9 @@ export const PropertyProvider = ({ children }: { children: React.ReactNode }) =>
       addProperty,
       refreshPendingProperties: fetchPendingProperties
     }}>
-      {children}
+      <div suppressHydrationWarning={true}>
+        {children}
+      </div>
     </PropertyContext.Provider>
   );
 };

@@ -664,54 +664,33 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Newsletter */}
-          <div className={`transition-all duration-1000 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          {/* Documents */}
+          <div>
             <h3 className="text-lg font-semibold mb-6 flex items-center">
               <span className="inline-block w-8 h-px bg-blue-400 mr-2"></span>
-              Subscribe
+              Documents
             </h3>
-            
-            <form onSubmit={handleSubscribe} className="relative">
-              <div className="flex items-center border-b border-blue-400 pb-1 mb-4">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Your email address"
-                  className="bg-transparent text-gray-300 w-full focus:outline-none"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="ml-2 bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full transition-colors focus:outline-none"
+            <ul className="space-y-2">
+              <li>
+                <a
+                  href="/whitepaper.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-900 font-semibold bg-blue-200/80 px-4 py-2 rounded-lg shadow-sm hover:bg-blue-300/90 hover:text-blue-800 transition-all duration-200 inline-block"
                 >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </button>
-              </div>
-              {isSubmitted && (
-                <div className="absolute -bottom-6 left-0 text-green-400 text-sm animate-fade-in-out">
-                  Thank you for subscribing!
-                </div>
-              )}
-            </form>
+                   Download Whitepaper (PDF)
+                </a>
+              </li>
+              {/* Add more document links here if needed */}
+            </ul>
           </div>
         </div>
         
         {/* Bottom Bar */}
         <div className={`mt-16 pt-8 border-t border-gray-800 flex flex-col justify-between items-center transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          {/* <p className="text-white-600 text-sm mb-4 md:mb-0">
-            © {new Date().getFullYear()} BlocAdobe. All rights reserved. Powered by blockchain technology.
-          </p>
-          <div className="flex space-x-6">
-            <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
-            <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</a>
-            <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Cookies</a>
-          </div> */}
+         
         </div>
       </div>
-
 
     </footer>
   );

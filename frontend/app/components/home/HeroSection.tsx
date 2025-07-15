@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { HomeIcon, TagIcon } from '@heroicons/react/24/solid';
 
 // Array of house images from the correct path
 const houseImages = [
@@ -45,7 +46,6 @@ export default function HeroSection() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // Change to next image every 3 seconds
       setCurrentImageIndex((prevIndex) =>
         prevIndex === houseImages.length - 1 ? 0 : prevIndex + 1
       );
@@ -98,6 +98,22 @@ export default function HeroSection() {
           <p className="max-w-2xl mx-auto mt-4 text-lg text-gray-200">
             {subheading}
           </p>
+          <div className="mt-10 flex flex-col sm:flex-row justify-center gap-6">
+            <a
+              href="/page/buy"
+              className="inline-flex items-center gap-3 px-10 py-4 rounded-2xl font-semibold text-lg shadow-xl bg-gradient-to-r from-blue-400 via-blue-600 to-blue-800 border border-blue-300/30 hover:from-blue-500 hover:to-blue-900 text-white transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-400/40"
+            >
+              <HomeIcon className="h7- w-7 text-white/90" />
+              Buy Property
+            </a>
+            <a
+              href="/page/sell"
+              className="inline-flex items-center gap-3 px-10 py-4 rounded-2xl font-semibold text-lg shadow-xl bg-gradient-to-r from-green-400 via-green-600 to-green-800 border border-green-300/30 hover:from-green-500 hover:to-green-900 text-white transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-400/40"
+            >
+              <TagIcon className="h-7 w-7 text-white/90" />
+              Sell Property
+            </a>
+          </div>
         </div>
       </div>
     </div>

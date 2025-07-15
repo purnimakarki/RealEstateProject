@@ -125,7 +125,7 @@ export default function SellPage() {
           zipCode: formData.zipCode,
           propertyType: formData.propertyType,
           apartmentType: formData.apartmentType,
-          amenities: formData.amenities, // Pass amenities as an array
+          amenities: formData.amenities, 
         };
 
         console.log('Submitting property for approval:', propertyData);
@@ -256,7 +256,7 @@ export default function SellPage() {
       1: ['apartmentType', 'title', 'description', 'price'],
       2: ['bedrooms', 'bathrooms', 'area'],
       3: ['address', 'city', 'state', 'zipCode'],
-      4: [], // No required fields in step 4
+      4: [], 
     };
 
     // Validate all fields for the current step

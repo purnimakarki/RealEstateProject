@@ -292,11 +292,11 @@ export default function BuyPage() {
                           <div className="flex justify-between text-sm text-blue-100 mt-4 pb-4 border-b border-blue-200/20">
                             <div className="flex items-center">
                               <span className="font-semibold text-lg text-white">{(property as any).bedrooms}</span>
-                              <span className="ml-1">Beds</span>
+                              <span className="ml-1">Bedrooms</span>
                             </div>
                             <div className="flex items-center">
                               <span className="font-semibold text-lg text-white">{(property as any).bathrooms}</span>
-                              <span className="ml-1">Baths</span>
+                              <span className="ml-1">Bathroom</span>
                             </div>
                             <div className="flex items-center">
                               <span className="font-semibold text-lg text-white">{(property as any).area}</span>
